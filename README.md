@@ -150,6 +150,14 @@ The score is a property of the observed model–dataset–prompt system, not a u
 
 Repeated calls to the same variant are used for **Repeat Drift**, not PFS. Paired canonical-versus-alternative differences use the exact McNemar test. Accuracy intervals use Wilson's method.
 
+## When “person” includes a painting
+
+One exploratory run exposed a category that existed in the labels but not in the question. Qwen3-VL 4B was asked `Nella fotografia c'è più di una persona?` across 98 photographs. The ground truth counted only people physically present when the photograph was made; painted, photographed and sculpted figures counted as no.
+
+There were eight readable false positives. All eight images contained people represented in paintings, frescoes or sculpture, but no physically present person. The model returned valid JSON without an explanation, so this does not establish why it answered yes. Its reading is also defensible: the prompt never said whether “person” meant someone in the physical scene or anyone represented inside the image.
+
+This is an exploratory observation from one model, one source group and one wording, with nine additional unreadable responses—not a general claim about Qwen3-VL. The next comparison should make the intended category explicit by excluding paintings, photographs, statues and screens. The longer account is in the [project article](https://VellBlue.github.io/fragilevision/#article).
+
 ## Evidence Gate
 
 A dramatic score is not automatically a publishable claim. The Evidence Gate checks, in plain sight:

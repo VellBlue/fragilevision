@@ -71,9 +71,9 @@ restare un semplice pacchetto Python, senza wrapper nativo.
 
 Alla prima installazione, senza nessun provider configurato, l’app controlla
 l’indirizzo di default di Ollama e registra solo i modelli che Ollama stesso
-dichiara capaci di visione (dal campo `capabilities` che restituisce, non da
-un’indovinata sul nome). Nessun altro endpoint viene sondato automaticamente:
-a differenza di Ollama, un server MLX, LM Studio o llama.cpp non condividono
+dichiara capaci di visione (dal campo `capabilities` che restituisce, senza
+dedurlo dal nome). Nessun altro endpoint viene sondato automaticamente: a
+differenza di Ollama, i server MLX, LM Studio e llama.cpp non condividono
 una porta standard, e indovinarne una rischierebbe di registrare in silenzio
 un servizio locale non correlato.
 
@@ -85,14 +85,35 @@ un servizio locale non correlato.
 - Prompt Fragility Score fra formulazioni controllate;
 - Repeat Drift fra ripetizioni identiche;
 - rispetto effettivo del formato richiesto;
-- test esatto di McNemar sulle stesse immagini.
+- test esatto di McNemar sulle stesse immagini;
 - accuratezza bilanciata per scena, così una raffica non pesa come molte prove indipendenti;
-- Evidence Gate, una checklist euristica e trasparente sulla maturità del claim.
+- Evidence Gate, una checklist euristica e trasparente sulla maturità della conclusione;
 - Model Arena per confrontare 2–8 modelli sulle stesse unità, con intervalli al 95%, delta appaiati, vittorie/sconfitte, McNemar esatto e latenza;
 - accordo fra revisori: alpha di Krippendorff, kappa di Cohen e coda di arbitrato;
 - prestazioni per modello: latenza, token, tasso d’errore, ETA sulle esecuzioni in corso e un campione di memoria;
 - gestione completa delle esecuzioni: rinomina, duplica, archivia, filtra ed esporta in CSV;
 - report pubblicabile: grafici SVG e stampa in PDF nella Claim Card, più un'esportazione in Markdown.
+
+## Quando “persona” comprende anche un dipinto
+
+Una prova esplorativa ha mostrato una categoria presente nelle etichette, ma
+non nella domanda. A Qwen3-VL 4B è stato chiesto `Nella fotografia c'è più di
+una persona?` su 98 fotografie. Nelle annotazioni contavano soltanto le persone
+fisicamente presenti al momento dello scatto; figure dipinte, fotografate o
+scolpite valevano come “no”.
+
+Ci sono stati otto falsi positivi leggibili. In tutti e otto i casi comparivano
+persone rappresentate in dipinti, affreschi o sculture, ma nessuna persona
+fisicamente presente. Il modello ha restituito JSON valido senza spiegazioni,
+quindi non sappiamo perché abbia risposto “sì”. La sua lettura, però, è
+difendibile: la domanda non chiariva se “persona” indicasse qualcuno nella
+scena fisica o chiunque fosse rappresentato nell’immagine.
+
+È un’osservazione su un solo modello, un solo gruppo sorgente e una sola
+formulazione, con altre nove risposte illeggibili; non è una conclusione
+generale su Qwen3-VL. Il prossimo confronto dovrà escludere esplicitamente
+dipinti, fotografie, statue e schermi. Il caso completo è raccontato
+nell’[articolo del progetto](https://VellBlue.github.io/fragilevision/it/#articolo).
 
 ## Annotazione scientifica
 
@@ -102,9 +123,9 @@ revisore che l’ha espresso, e il valore usato dalle metriche è **derivato** d
 quei giudizi, mai scritto a mano.
 
 La regola di consenso non inventa un vincitore. Decidono l’unanimità e la
-maggioranza stretta; un pareggio o una semplice pluralità no: diventano un
-conflitto che vale `incerto` e resta fuori dall’accuratezza finché una persona
-non arbitra. L’arbitrato porta il nome di chi lo ha deciso e si affianca alle
+maggioranza assoluta. Un pareggio o un risultato senza maggioranza diventano
+invece un conflitto che vale `incerto` e resta fuori dall’accuratezza finché
+una persona non arbitra. L’arbitrato porta il nome di chi lo ha deciso e si affianca alle
 etichette indipendenti invece di cancellarle. Un caso su cui nessuno ha
 obiettato non si può ribaltare.
 

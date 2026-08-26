@@ -50,7 +50,7 @@
         <p class="section-tag">01 · Perché esiste</p>
         <h2>Cercavo il modello migliore. Ho trovato un problema nella domanda.</h2>
         <p class="lead">All’inizio c’era un benchmark sulle mie fotografie. Pensavo che gli errori si sarebbero spiegati soprattutto con la dimensione dei modelli. Non è andata così.</p>
-        <p>Con una domanda breve e piana, un modello da quattro miliardi di parametri superava quello da otto miliardi interrogato con la formulazione originale. Una negazione poteva trasformare un buon risultato in una risposta quasi costante. A volte bastava cambiare uno spazio nel prefill per ottenere una parola, un paragrafo oppure niente.</p>
+        <p>Con una domanda semplice e diretta, un modello da quattro miliardi di parametri superava quello da otto miliardi interrogato con la formulazione originale. Una negazione poteva trasformare un buon risultato in una risposta quasi costante. A volte bastava cambiare uno spazio nel prefill per ottenere una parola, un paragrafo oppure niente.</p>
         <p>Ho raccontato quel lavoro in <a href="https://vellblue.github.io/vlm-photo-bench/it/">Come formuli la domanda conta più della dimensione del modello</a>. Restava però un problema di metodo: se il punteggio cambia tanto mentre fotografie e pesi rimangono gli stessi, scegliere un unico prompt e non toccarlo non è una decisione neutrale. Anche il prompt fa parte dello strumento di misura.</p>
         <p>Gli script del benchmark erano sufficienti per mostrare il problema una volta. Non trasformavano la cautela in un metodo. FragileVision è lo strumento che avrei voluto quando quei risultati mi hanno fatto dubitare del mio stesso banco di prova.</p>
 
@@ -111,7 +111,7 @@
           </div>
           <div class="flow-row">
             <b>03</b><h3>Verità di riferimento</h3>
-            <p>I revisori lavorano alla cieca. L’unanimità o una maggioranza netta possono chiudere un caso; un pareggio o l’assenza di una maggioranza no. L’arbitrato si aggiunge, non cancella il disaccordo.</p>
+            <p>I revisori lavorano alla cieca. L’unanimità o una maggioranza assoluta possono chiudere un caso; un pareggio o l’assenza di una maggioranza no. L’arbitrato si aggiunge, non cancella il disaccordo.</p>
           </div>
           <div class="flow-row">
             <b>04</b><h3>La domanda alla prova</h3>
@@ -189,7 +189,7 @@
 
       <div class="measure">
         <p>I due decoder non producono hash identici. Ho misurato anche questo: su 200 fotografie differiscono in media di 2,1 bit e al massimo di 7 bit su 64. Sulle coppie identiche concordano quasi sempre; sul confine più largo della “stessa scena” divergono abbastanza da rendere disonesto trattarli come equivalenti.</p>
-        <p>Perciò il motore è nominato nell’audit ed entra nella versione della cache. I confronti fra macchine devono avvenire a parità di motore. La soglia dei quasi duplicati non è stata spostata per far sembrare migliore il fallback.</p>
+        <p>Perciò il motore è indicato nell’audit ed entra nella versione della cache. I confronti fra macchine devono avvenire a parità di motore. La soglia dei quasi duplicati non è stata spostata per far sembrare migliore il decoder alternativo.</p>
         <p>Questa sezione esiste perché l’errore racconta il software meglio di un altro elenco di funzioni. Anche FragileVision ha dovuto essere giudicato con il metro che propone agli altri.</p>
       </div>
     </section>
@@ -204,7 +204,7 @@
           <div class="refusal"><b>×</b><p>Nessun verdetto estratto a forza da una risposta ambigua.<span>Se compaiono più etichette possibili, il parser registra la risposta come illeggibile invece di scegliere la parola più comoda.</span></p></div>
           <div class="refusal"><b>×</b><p>Nessun 100% costruito su una sola risposta facile.<span>Nell’Arena i modelli sono ordinati soltanto sulle unità alle quali tutti hanno risposto in modo leggibile. La copertura resta accanto al punteggio.</span></p></div>
           <div class="refusal"><b>×</b><p>Nessuno split casuale dentro la stessa scena.<span>Gruppi sorgente e cluster quasi duplicati si muovono insieme. Se esiste una sola scena indipendente, lo split viene rifiutato invece di essere inventato.</span></p></div>
-          <div class="refusal"><b>×</b><p>Nessun consenso forzato.<span>Un pareggio resta un conflitto. L’arbitro firma una nuova decisione; i revisori originali non vengono riscritti.</span></p></div>
+          <div class="refusal"><b>×</b><p>Nessun consenso forzato.<span>Un pareggio resta un conflitto. L’arbitro firma una nuova decisione; i giudizi originari non vengono modificati.</span></p></div>
           <div class="refusal"><b>×</b><p>Nessuna classifica globale dei modelli.<span>La Claim Card descrive un sistema formato da modello, dataset e prompt. Non trasforma un’osservazione locale in una graduatoria universale.</span></p></div>
         </div>
 
