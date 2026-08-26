@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+.venv/
+dist/
+build/
+*.egg-info/
+.DS_Store
+.fragilevision/
+

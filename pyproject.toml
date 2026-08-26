@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fragilevision"
+version = "0.15.0"
+description = "Local-first prompt fragility laboratory for vision-language models"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+authors = [{name = "FragileVision contributors"}]
+keywords = ["evaluation", "vlm", "benchmark", "prompt-robustness", "local-ai"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/VellBlue/fragilevision"
+Repository = "https://github.com/VellBlue/fragilevision"
+Issues = "https://github.com/VellBlue/fragilevision/issues"
+Changelog = "https://github.com/VellBlue/fragilevision/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+# Only needed to downscale oversized inputs where macOS sips is absent.
+images = ["Pillow>=10.0"]
+
+[project.scripts]
+fragilevision = "fragilevision.__main__:main"
+
+[tool.setuptools.package-data]
+fragilevision = ["static/*"]

@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.svg">
+  <title>FragileVision</title>
+  <link rel="stylesheet" href="/styles.css?v=1110">
+  <script src="/app.js?v=1110" defer></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand" aria-label="FragileVision">
+      <div class="brand-mark"><i></i><i></i><i></i></div>
+      <div><strong>Fragile<span>Vision</span></strong><small>Evidence, not vibes.</small></div>
+    </div>
+    <nav aria-label="Sezioni">
+      <button class="nav-item active" data-view="overview"><span>01</span>Panoramica</button>
+      <button class="nav-item" data-view="dataset"><span>02</span>Dataset</button>
+      <button class="nav-item" data-view="questions"><span>03</span>Mutation Lab</button>
+      <button class="nav-item" data-view="annotate"><span>04</span>Annotazione</button>
+      <button class="nav-item" data-view="providers"><span>05</span>Modelli</button>
+      <button class="nav-item" data-view="runs"><span>06</span>Esecuzioni</button>
+      <button class="nav-item" data-view="arena"><span>07</span>Model Arena</button>
+      <button class="nav-item" data-view="results"><span>08</span>Failure Atlas</button>
+      <button class="nav-item" data-view="performance"><span>09</span>Prestazioni</button>
+    </nav>
+    <div class="privacy-seal">
+      <span class="pulse"></span>
+      <div><strong>Local-only</strong><small>127.0.0.1 · zero telemetry</small></div>
+    </div>
+    <div class="version" id="version">FragileVision</div>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-heading">
+      <div class="eyebrow" id="section-kicker">LAB / OVERVIEW</div>
+      <h1 id="section-title">Quanto regge davvero?</h1>
+    </div>
+    <div class="topbar-actions">
+      <button class="mini top-new-project" id="top-new-project" type="button">＋ Nuovo progetto</button>
+      <button class="mini" id="open-trash" type="button">Cestino</button>
+      <label class="project-switcher">Progetto
+        <select id="project-select" aria-label="Progetto attivo"><option value="">Nessun progetto</option></select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="view active" id="view-overview">
+      <div class="hero-panel">
+        <div class="hero-copy">
+          <div class="signal-label"><span></span> PROMPT ROBUSTNESS LAB</div>
+          <h2>Una classifica ti dice <em>chi vince.</em><br>FragileVision ti dice <em>se crederci.</em></h2>
+          <p>Modifica una sola proprietà del prompt alla volta. Misura la risposta sulle stesse immagini. Se la conclusione cambia, qui lo vedrai — caso per caso.</p>
+          <div class="hero-actions">
+            <button class="primary" data-go="dataset">Inizia dal dataset</button>
+            <button class="ghost" data-go="results">Apri Failure Atlas</button>
+          </div>
+        </div>
+        <div class="fragility-orbit" aria-hidden="true">
+          <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+          <div class="orbit-core"><b id="overview-score">—</b><span>FRAGILITY</span></div>
+          <i class="node n1"></i><i class="node n2"></i><i class="node n3"></i>
+        </div>
+      </div>
+      <div class="metric-strip" id="overview-metrics">
+        <article><span>IMMAGINI</span><b id="stat-images">0</b><small>nel progetto attivo</small></article>
+        <article><span>DOMANDE</span><b id="stat-questions">0</b><small>costrutti misurati</small></article>
+        <article><span>ANNOTAZIONI</span><b id="stat-annotations">0</b><small>giudizi umani</small></article>
+        <article><span>RUN</span><b id="stat-runs">0</b><small>claim registrati</small></article>
+      </div>
+      <div class="two-col">
+        <article class="panel">
+          <div class="panel-head"><div><span class="eyebrow">WORKSPACE</span><h3>I tuoi progetti</h3></div><button class="mini" id="new-project-toggle">＋ Nuovo</button></div>
+          <form id="project-form" class="stack compact hidden">
+            <label>Nome<input name="name" required maxlength="100" placeholder="Es. Fotografia notturna"></label>
+            <label>Descrizione<textarea name="description" rows="2" placeholder="Cosa vuoi verificare?"></textarea></label>
+            <button class="primary" type="submit">Crea laboratorio</button>
+          </form>
+          <div id="project-cards" class="project-cards empty-state">Nessun progetto. Crea il primo laboratorio.</div>
+        </article>
+        <article class="panel manifesto">
+          <span class="eyebrow">THE EVIDENCE CONTRACT</span><h3>Ogni numero deve confessare i propri limiti.</h3>
+          <ol><li><b>Baseline</b><span>Quanto farebbe un pappagallo senza guardare?</span></li>
+              <li><b>Scope</b><span>Su quali immagini e domande vale il risultato?</span></li>
+              <li><b>Mutation</b><span>Cosa cambia se riscrivi la stessa domanda?</span></li>
+              <li><b>Replay</b><span>Un altro può ricostruire esattamente il claim?</span></li></ol>
+        </article>
+      </div>
+    </section>
+
+    <section class="view" id="view-dataset">
+      <div class="section-lead"><div><span class="eyebrow">PRIVATE BY CONSTRUCTION</span><h2>Il dataset resta tuo.</h2><p>Le immagini vengono copiate nello spazio dati locale. Nessun upload, nessuna API cloud, nessuna telemetria.</p></div><div class="fingerprint-box"><span>DATASET FINGERPRINT</span><code id="dataset-fingerprint">nessun progetto selezionato</code></div></div>
+      <div class="two-col dataset-layout">
+        <article class="panel">
+          <div class="panel-head"><div><span class="eyebrow">IMPORT</span><h3>Aggiungi una cartella</h3></div><span class="badge">SHA-256 DEDUP</span></div>
+          <form id="import-form" class="stack">
+            <label>Cartella dataset<div class="path-picker"><input name="directory" required placeholder="Scegli una cartella…"><button class="ghost" type="button" id="choose-dataset-directory">Scegli cartella</button></div></label>
+            <label>Gruppo o servizio<input name="source_group" placeholder="Es. concerto-2026 (opzionale)"></label>
+            <label class="check"><input type="checkbox" name="recursive" checked> Includi sottocartelle</label>
+            <button class="primary" type="submit">Importa in locale</button>
+          </form>
+          <div class="import-result" id="import-result"></div>
+        </article>
+        <article class="panel dataset-health">
+          <span class="eyebrow">DATASET HEALTH</span><h3>Prima dei modelli, guarda il campione.</h3>
+          <div class="health-row"><span>Immagini uniche</span><b id="health-images">0</b></div>
+          <div class="health-row"><span>Gruppi indipendenti</span><b id="health-groups">0</b></div>
+          <div class="health-row"><span>Copertura annotazioni</span><b id="health-coverage">0%</b></div>
+          <p class="hint">FragileVision conserva il gruppo sorgente per evitare che cento fotogrammi della stessa scena fingano di essere cento prove indipendenti.</p>
+          <button class="ghost danger-action" id="trash-dataset" type="button">Rimuovi le immagini dal dataset</button>
+        </article>
+      </div>
+      <article class="panel audit-panel">
+        <div class="panel-head"><div><span class="eyebrow">DATASET AUDIT / LOCAL</span><h3>Il campione regge il claim?</h3></div>
+          <div class="audit-tools"><label class="check"><input type="checkbox" id="audit-deep"> Verifica i checksum</label><button class="ghost" id="run-audit" type="button">Controlla dataset</button></div></div>
+        <div id="audit-empty" class="empty-state">Nessun controllo eseguito. Il controllo è locale e non invia nulla.</div>
+        <div id="audit-results" class="hidden">
+          <div id="audit-warnings" class="audit-warnings"></div>
+          <div class="audit-grid">
+            <div><span>INTEGRITÀ</span><b id="audit-integrity">—</b><small id="audit-integrity-note"></small></div>
+            <div><span>QUASI DUPLICATI</span><b id="audit-duplicates">—</b><small id="audit-duplicates-note"></small></div>
+            <div><span>GRUPPI INDIPENDENTI</span><b id="audit-groups">—</b><small id="audit-groups-note"></small></div>
+            <div><span>LATO LUNGO MEDIANO</span><b id="audit-resolution">—</b><small id="audit-resolution-note"></small></div>
+          </div>
+          <div id="audit-duplicate-pairs" class="duplicate-pairs"></div>
+          <div id="audit-balance" class="table-wrap"></div>
+          <p id="audit-limitations" class="hint"></p>
+        </div>
+      </article>
+
+      <article class="panel split-panel">
+        <div class="panel-head"><div><span class="eyebrow">TRAIN / TEST</span><h3>Suddivisione per scena</h3></div><span class="badge" id="split-state">non assegnata</span></div>
+        <p class="hint">La suddivisione assegna scene intere, mai singole immagini. Due fotogrammi dello stesso scatto su lati opposti farebbero misurare al test qualcosa che il train già contiene — e le scene sono i gruppi sorgente, uniti dove un quasi duplicato attraversa il confine fra due gruppi.</p>
+        <form id="split-form" class="stack compact">
+          <div class="form-row three"><label>Quota di test<input name="test_ratio" type="number" value="0.3" min="0.05" max="0.9" step="0.05"></label><label>Seed<input name="seed" type="number" value="0"></label><label>&nbsp;<div class="split-actions"><button class="primary" type="submit">Assegna</button><button class="ghost" type="button" id="clear-split">Azzera</button></div></label></div>
+        </form>
+        <div id="split-summary" class="split-summary"></div>
+      </article>
+
+      <div class="panel gallery-panel"><div class="panel-head"><div><span class="eyebrow">LOCAL CONTACT SHEET</span><h3>Immagini</h3></div><span id="gallery-count" class="badge">0</span></div><div id="image-gallery" class="image-gallery empty-state">Importa una cartella per iniziare.</div></div>
+    </section>
+
+    <section class="view" id="view-questions">
+      <div class="section-lead"><div><span class="eyebrow">CONTROLLED MUTATION</span><h2>Cambia una cosa. Misura tutto.</h2><p>Ogni variante dichiara quale proprietà modifica. È così che una correlazione diventa un esperimento.</p></div><div class="mutation-legend"><i class="canonical"></i>canonica <i class="negation"></i>negazione <i class="language"></i>lingua <span class="legend-more">· riformulazione · ambiguità · esempi · ordine · formato · lunghezza</span></div></div>
+      <div class="two-col questions-layout">
+        <article class="panel">
+          <span class="eyebrow">NEW CONSTRUCT</span><h3>Definisci una domanda</h3>
+          <form id="question-form" class="stack">
+            <label>Etichetta<input name="label" required placeholder="Luce visibile"></label>
+            <label>Chiave breve<input name="key" placeholder="luce"></label>
+            <label>Domanda canonica<textarea name="text" required rows="4" placeholder="Nella fotografia si vede una luce accesa?"></textarea></label>
+            <div class="form-row"><label>Lingua<input name="language" value="it" maxlength="12"></label><label>Descrizione<input name="description" placeholder="Cosa misura realmente"></label></div>
+            <button class="primary" type="submit">Crea domanda canonica</button>
+          </form>
+        </article>
+        <article class="panel mutation-principle">
+          <span class="eyebrow">CAUSALITY CHECK</span><h3>Non generare cento parafrasi casuali.</h3>
+          <p>Una buona mutazione cambia un solo asse e registra l’ipotesi:</p>
+          <div class="axis-list"><span><b>01</b> riformulazione</span><span><b>02</b> negazione</span><span><b>03</b> ambiguità</span><span><b>04</b> lingua</span><span><b>05</b> esempi</span><span><b>06</b> ordine</span><span><b>07</b> formato</span><span><b>08</b> lunghezza</span></div>
+        </article>
+      </div>
+      <article class="panel stress-generator"><div class="panel-head"><div><span class="eyebrow">LOCAL STRESS GENERATOR</span><h3>Genera mutazioni controllate</h3></div><span class="badge">REVIEW BEFORE SAVE</span></div>
+        <form id="stress-form" class="stack">
+          <div class="form-row three"><label>Domanda<select name="question_id" id="stress-question"><option value="">Seleziona</option></select></label><label>Modello locale<select name="provider_id" id="stress-provider"><option value="">Seleziona</option></select></label><label>Lingua di uscita<input name="language" value="it" maxlength="12"></label></div>
+          <fieldset><legend>Assi da generare</legend><div class="stress-axes"><label class="check"><input type="checkbox" name="axis" value="paraphrase" checked> Riformulazione</label><label class="check"><input type="checkbox" name="axis" value="negation" checked> Negazione</label><label class="check"><input type="checkbox" name="axis" value="ambiguity" checked> Ambiguità</label><label class="check"><input type="checkbox" name="axis" value="language"> Lingua</label><label class="check"><input type="checkbox" name="axis" value="examples"> Esempi</label><label class="check"><input type="checkbox" name="axis" value="order"> Ordine</label><label class="check"><input type="checkbox" name="axis" value="format"> Formato</label><label class="check"><input type="checkbox" name="axis" value="length"> Lunghezza</label></div></fieldset>
+          <button class="primary" id="stress-generate" type="submit">Genera con il modello locale</button>
+          <p class="hint">Il testo passa esclusivamente al provider privato configurato. Nulla viene salvato finché non approvi ogni proposta.</p>
+        </form>
+        <div id="stress-results" class="stress-results"></div>
+      </article>
+      <div id="question-list" class="question-list empty-state">Crea una domanda per aprire il Mutation Lab.</div>
+    </section>
+
+    <section class="view" id="view-annotate">
+      <div class="annotation-head">
+        <div><span class="eyebrow">HUMAN GROUND TRUTH</span><h2>Guarda prima tu.</h2></div>
+        <div class="annotation-controls">
+          <label>Domanda<select id="annotation-question"><option value="">Seleziona</option></select></label>
+          <label>Revisore<input id="annotation-annotator" maxlength="60" placeholder="Il tuo nome" list="annotator-names"><datalist id="annotator-names"></datalist></label>
+          <label class="check blind-toggle"><input type="checkbox" id="annotation-blind" checked> Modalità cieca</label>
+        </div>
+        <div class="annotation-progress"><span id="annotation-progress-label">0 / 0 annotate</span><div><i id="annotation-progress-bar"></i></div><small id="annotation-panel-label">nessun revisore registrato</small></div>
+      </div>
+      <div class="annotation-stage empty" id="annotation-stage">
+        <div class="annotation-image-wrap"><img id="annotation-image" alt="Immagine da annotare"><div class="image-index" id="annotation-index">—</div></div>
+        <div class="annotation-console">
+          <span class="eyebrow">CANONICAL QUESTION</span><h3 id="annotation-prompt">Seleziona una domanda.</h3>
+          <p id="annotation-file" class="mono">—</p>
+          <div id="annotation-consensus" class="consensus-strip"></div>
+          <div class="verdict-grid">
+            <button data-verdict="yes" class="yes"><kbd>1</kbd><b>Sì</b><span>il costrutto è presente</span></button>
+            <button data-verdict="no" class="no"><kbd>2</kbd><b>No</b><span>il costrutto è assente</span></button>
+            <button data-verdict="uncertain" class="uncertain"><kbd>3</kbd><b>Incerto</b><span>l’immagine non decide</span></button>
+            <button data-verdict="exclude" class="exclude"><kbd>4</kbd><b>Escludi</b><span>caso non valido</span></button>
+          </div>
+          <label>Nota del revisore<textarea id="annotation-note" rows="3" placeholder="Perché questo caso è ambiguo?"></textarea></label>
+          <div class="annotation-nav"><button class="ghost" id="annotation-prev">← Precedente</button><button class="mini" id="annotation-withdraw">Ritira il mio giudizio</button><button class="ghost" id="annotation-next">Successiva →</button></div>
+        </div>
+      </div>
+
+      <article class="panel agreement-panel">
+        <div class="panel-head"><div><span class="eyebrow">INTER-ANNOTATOR AGREEMENT / LOCAL</span><h3>Un altro avrebbe scritto le stesse etichette?</h3></div><div class="audit-tools"><span class="badge" id="agreement-badge">—</span><button class="ghost" id="refresh-agreement" type="button">Ricalcola accordo</button></div></div>
+        <div id="agreement-empty" class="empty-state">L’accordo si calcola sui casi giudicati da più di un revisore. Cambia nome nel campo “Revisore” e rivedi un sottoinsieme del dataset.</div>
+        <div id="agreement-results" class="hidden">
+          <div id="agreement-warnings" class="audit-warnings"></div>
+          <div class="audit-grid">
+            <div><span>REVISORI</span><b id="agreement-reviewers">—</b><small id="agreement-reviewers-note"></small></div>
+            <div><span>KRIPPENDORFF α</span><b id="agreement-alpha">—</b><small id="agreement-alpha-note"></small></div>
+            <div><span>ACCORDO OSSERVATO</span><b id="agreement-observed">—</b><small id="agreement-observed-note"></small></div>
+            <div><span>CASI IN DOPPIO</span><b id="agreement-units">—</b><small id="agreement-units-note"></small></div>
+          </div>
+          <div id="agreement-consensus" class="consensus-bar"></div>
+          <div class="two-col agreement-grid">
+            <div><h3>Revisori</h3><div id="agreement-annotators" class="table-wrap"></div></div>
+            <div><h3>Coppie di revisori</h3><div id="agreement-pairs" class="table-wrap"></div></div>
+          </div>
+          <h3>Accordo per domanda</h3><div id="agreement-questions" class="table-wrap"></div>
+          <p id="agreement-method" class="hint"></p>
+          <p id="agreement-limitations" class="hint"></p>
+        </div>
+      </article>
+
+      <article class="panel conflict-panel">
+        <div class="panel-head"><div><span class="eyebrow">ADJUDICATION QUEUE</span><h3>Casi su cui il gruppo non ha una voce sola</h3></div><span class="badge" id="conflict-badge">0 APERTI</span></div>
+        <p class="hint">Un conflitto non risolto vale <code>incerto</code> e resta fuori dall’accuratezza: una maggioranza inventata sarebbe esattamente la falsa sicurezza che questo strumento esiste per smascherare. Arbitrare significa decidere da persona, con il proprio nome accanto alla decisione.</p>
+        <div id="conflict-list" class="conflict-list empty-state">Nessun caso conteso.</div>
+      </article>
+    </section>
+
+    <section class="view" id="view-providers">
+      <div class="section-lead"><div><span class="eyebrow">MODEL ADAPTERS</span><h2>Locale significa verificabile.</h2><p>Endpoint pubblici rifiutati per impostazione: sono ammessi loopback, reti private e nodi Tailscale.</p></div><span class="privacy-large">NO CLOUD<br>BY DEFAULT</span></div>
+      <div class="two-col">
+        <article class="panel"><span class="eyebrow">ADD MODEL</span><h3>Configura un provider</h3>
+          <form id="provider-form" class="stack">
+            <label>Nome leggibile<input name="name" required placeholder="Qwen3-VL 8B Q4"></label>
+            <div class="form-row"><label>Protocollo<select name="kind"><option value="ollama">Ollama</option><option value="openai">OpenAI-compatible / MLX</option></select></label><label>Modello<div class="model-picker"><select id="detected-models" class="hidden" aria-label="Scegli un modello rilevato"><option value="">Scegli un modello rilevato…</option></select><input name="model" required placeholder="qwen3-vl:8b" autocomplete="off"><small id="model-picker-hint">Inserisci il nome oppure usa “Rileva modelli”.</small></div></label></div>
+            <label>Endpoint<input name="endpoint" required value="http://127.0.0.1:11434" placeholder="http://127.0.0.1:11434"><small class="hint">Per OpenAI-compatible / MLX basta host e porta: <code>/v1</code> viene aggiunto da solo se manca.</small></label>
+            <div class="model-tools"><button class="ghost" type="button" id="discover-models">Rileva modelli</button><button class="ghost" type="button" id="choose-model-directory">Scegli cartella modello</button></div>
+            <button class="primary" type="submit">Salva provider locale</button>
+            <button class="ghost" type="button" id="add-simulator">Prova subito con il simulatore sintetico</button>
+            <p class="hint">Il simulatore non usa la rete e stressa intenzionalmente i prompt. I suoi run sono marcati DEMO e non valgono come benchmark.</p>
+          </form>
+        </article>
+        <article class="panel"><div class="panel-head"><div><span class="eyebrow">REGISTERED</span><h3>Modelli</h3></div><span class="badge" id="provider-count">0</span></div><div id="provider-list" class="provider-list empty-state">Nessun modello configurato.</div></article>
+      </div>
+    </section>
+
+    <section class="view" id="view-runs">
+      <div class="section-lead"><div><span class="eyebrow">REPRODUCIBLE RUNNER</span><h2>Registra l’esperimento, non solo il punteggio.</h2><p>Prompt finale, seed, temperatura, output grezzo, parser, latenza e token rimangono nel ledger.</p></div></div>
+      <div class="two-col runs-layout">
+        <article class="panel"><span class="eyebrow">NEW RUN</span><h3>Configura l’esecuzione</h3>
+          <form id="run-form" class="stack">
+            <label>Nome del claim<input name="name" placeholder="Qwen 8B · varianti luce · Q4"></label>
+            <label>Provider<select name="provider_id" id="run-provider"><option value="">Seleziona</option></select></label>
+            <label>Suddivisione<select name="split"><option value="">Tutto il dataset</option><option value="train">Solo train</option><option value="test">Solo test</option></select></label>
+            <fieldset><legend>Domande e varianti</legend><div id="run-questions" class="check-list">Crea prima una domanda.</div></fieldset>
+            <div class="form-row three"><label>Ripetizioni<input name="repetitions" type="number" value="1" min="1" max="20"></label><label>Temperatura<input name="temperature" type="number" value="0" min="0" max="2" step="0.1"></label><label>Seed<input name="seed" type="number" value="0"></label></div>
+            <button class="primary" type="submit">Avvia run riproducibile</button>
+          </form>
+        </article>
+        <article class="panel"><div class="panel-head"><div><span class="eyebrow">CLAIM LEDGER</span><h3>Esecuzioni</h3></div><span class="badge" id="run-count">0</span></div>
+          <div class="run-filters">
+            <select id="run-filter-project" aria-label="Filtra per progetto"><option value="">Tutti i progetti</option></select>
+            <select id="run-filter-status" aria-label="Filtra per stato"><option value="">Tutti gli stati</option><option value="queued">In coda</option><option value="running">In corso</option><option value="paused">In pausa</option><option value="completed">Completate</option><option value="failed">Fallite</option><option value="cancelled">Annullate</option></select>
+            <select id="run-filter-provider" aria-label="Filtra per modello"><option value="">Tutti i modelli</option></select>
+            <input id="run-filter-search" type="search" placeholder="Cerca per nome…" aria-label="Cerca per nome">
+            <label class="check run-filter-archived"><input type="checkbox" id="run-filter-archived"> Mostra archiviate</label>
+            <a id="run-export-link" class="ghost button" href="/api/runs/export" target="_blank" rel="noopener">Esporta CSV</a>
+          </div>
+          <div id="run-list" class="run-list empty-state">Nessuna esecuzione.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="view" id="view-arena">
+      <div class="section-lead"><div><span class="eyebrow">MODEL ARENA / PAIRED</span><h2>Stesso esperimento. <em>Modelli diversi.</em></h2><p>FragileVision esegue i modelli in sequenza sulle stesse immagini e misura differenze appaiate, non classifiche costruite su campioni diversi.</p></div><span class="privacy-large">LOCAL RUNS<br>FAIR ORDER</span></div>
+      <div class="two-col arena-setup">
+        <article class="panel"><span class="eyebrow">MATCHED BATCH</span><h3>Avvia un confronto controllato</h3>
+          <form id="arena-form" class="stack">
+            <label>Nome dell’Arena<input name="name" placeholder="Arena Flora · Qwen VL"></label>
+            <fieldset><legend>Modelli · selezionane almeno due</legend><div id="arena-providers" class="check-list">Configura almeno due modelli.</div></fieldset>
+            <label>Suddivisione<select name="split"><option value="">Tutto il dataset</option><option value="train">Solo train</option><option value="test">Solo test</option></select></label>
+            <fieldset><legend>Domande identiche per tutti</legend><div id="arena-questions" class="check-list">Crea prima una domanda.</div></fieldset>
+            <div class="form-row three"><label>Ripetizioni<input name="repetitions" type="number" value="1" min="1" max="20"></label><label>Temperatura<input name="temperature" type="number" value="0" min="0" max="2" step="0.1"></label><label>Seed<input name="seed" type="number" value="0"></label></div>
+            <button class="primary" id="arena-start" type="submit">Avvia Arena sequenziale</button>
+            <p class="hint">Sequenziale significa che un solo modello usa GPU e memoria alla volta: i tempi restano confrontabili e si evita la contesa di VRAM.</p>
+          </form>
+        </article>
+        <article class="panel"><div class="panel-head"><div><span class="eyebrow">COMPLETED EVIDENCE</span><h3>Confronta esecuzioni esistenti</h3></div><span class="badge" id="arena-run-count">0</span></div><div id="arena-run-list" class="arena-run-list empty-state">Servono almeno due run completati e compatibili.</div><button class="primary arena-compare-button" id="arena-compare" type="button" disabled>Confronta selezionati</button><p class="hint">Sono compatibili i run con lo stesso progetto, le stesse domande e le stesse varianti registrate al momento dell’esecuzione, oltre a ripetizioni, temperatura, seed e limite token. Aggiungere una variante a una domanda rende incompatibili i run precedenti: è voluto.</p></article>
+      </div>
+      <div id="arena-empty" class="empty-atlas arena-empty"><div class="scan-lines"></div><b>NO MATCHED RUNS SELECTED</b><span>Avvia una nuova Arena oppure seleziona almeno due esecuzioni compatibili.</span></div>
+      <div id="arena-results" class="hidden">
+        <div class="arena-leader panel"><div><span class="eyebrow">CONTEXTUAL LEADER</span><h3 id="arena-leader-name">—</h3><p id="arena-leader-note">—</p></div><div class="arena-overlap"><b id="arena-common-units">0</b><span>UNITÀ COMUNI</span><small id="arena-overlap-rate">0% sovrapposizione</small></div></div>
+        <div id="arena-warning" class="arena-warning"></div>
+        <div class="panel"><div class="panel-head"><div><span class="eyebrow">RANKING / 95% CI</span><h3>Classifica contestuale</h3></div><span class="badge">NO UNIVERSAL WINNER</span></div><div id="arena-ranking" class="arena-ranking table-wrap"></div></div>
+        <div class="two-col arena-analysis">
+          <article class="panel"><span class="eyebrow">PAIRED DIFFERENCES</span><h3>Testa a testa</h3><div id="arena-pairwise" class="table-wrap"></div></article>
+          <article class="panel"><span class="eyebrow">DELTA MATRIX</span><h3>Vantaggio di accuratezza</h3><div id="arena-matrix" class="table-wrap"></div></article>
+        </div>
+        <p id="arena-method" class="arena-method"></p>
+      </div>
+    </section>
+
+    <section class="view" id="view-results">
+      <div class="atlas-head"><div><span class="eyebrow">FAILURE ATLAS</span><h2>Dove si spezza la conclusione?</h2></div><label>Esecuzione<select id="result-run"><option value="">Seleziona un run completato</option></select></label><div class="export-actions"><a id="report-link" class="ghost button disabled" target="_blank">Claim Card</a><a id="markdown-link" class="ghost button disabled" download>Markdown</a><a id="bundle-link" class="primary button disabled">Replay Bundle</a></div></div>
+      <div id="results-empty" class="empty-atlas"><div class="scan-lines"></div><b>NO EVIDENCE SELECTED</b><span>Scegli un’esecuzione completata.</span></div>
+      <div id="results-content" class="hidden">
+        <div class="result-hero">
+          <div class="score-dial"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50"></circle><circle id="score-ring" cx="60" cy="60" r="50"></circle></svg><div><b id="result-fragility">0</b><span>PFS / 100</span></div></div>
+          <div><span class="eyebrow">PROMPT FRAGILITY SCORE</span><h3 id="result-verdict">Nessuna fragilità misurata</h3><p id="result-explain"></p></div>
+          <div class="result-mini-grid"><div><span>ACCURACY · VALID/TOTAL</span><b id="result-accuracy">—</b></div><div><span>SCENE BALANCED</span><b id="result-scene">—</b></div><div><span>BASELINE</span><b id="result-baseline">—</b></div><div><span>FORMAT</span><b id="result-format">—</b></div><div><span>REPEAT DRIFT</span><b id="result-repeat">—</b></div><div><span>EVIDENCE GATE</span><b id="result-gate">—</b></div><div><span>JSON STRETTO</span><b id="result-strict">—</b></div></div>
+        </div>
+        <div class="panel evidence-panel"><div class="evidence-grade" id="evidence-grade">E</div><div><span class="eyebrow">EVIDENCE GATE · HEURISTIC</span><h3 id="evidence-status">Prova insufficiente</h3><p>Misura la maturità del claim, non la qualità universale del modello.</p><div id="evidence-checks" class="evidence-checks"></div></div></div>
+        <div class="panel"><div class="panel-head"><div><span class="eyebrow">PARSER HONESTY</span><h3>Da dove arriva davvero il verdetto</h3></div><span class="badge" id="parser-badge">—</span></div><p id="parser-note" class="hint"></p><div id="parser-table" class="table-wrap"></div></div>
+        <div class="panel"><div class="panel-head"><div><span class="eyebrow">VARIANT FINGERPRINT</span><h3>Stessa domanda, superfici diverse</h3></div></div><div id="variant-bars" class="variant-bars"></div></div>
+        <div class="two-col atlas-grid"><article class="panel"><span class="eyebrow">PAIRED EVIDENCE</span><h3>Test di McNemar</h3><div id="comparison-table" class="table-wrap"></div></article><article class="panel"><span class="eyebrow">FRAGILE CASES</span><h3>Immagini che cambiano verdetto</h3><div id="fragile-cases" class="fragile-cases"></div></article></div>
+        <div class="panel diagnosis-panel"><div class="panel-head"><div><span class="eyebrow">FAILURE DIAGNOSIS / LOCAL</span><h3>Dove il modello sbaglia soprattutto</h3></div><span class="badge" id="diagnosis-coverage">ANALISI LOCALE</span></div><div id="diagnosis-summary" class="diagnosis-summary">Analisi in corso…</div><div class="two-col diagnosis-grid"><div><h3>Pattern di rischio</h3><div id="diagnosis-patterns" class="diagnosis-patterns"></div></div><div><h3>Cluster dei fallimenti</h3><div id="diagnosis-clusters" class="diagnosis-clusters"></div></div></div><p id="diagnosis-limitations" class="hint"></p></div>
+      </div>
+    </section>
+    <section class="view" id="view-performance">
+      <div class="section-lead"><div><span class="eyebrow">MODEL COST / GLOBAL</span><h2>Quanto costa davvero chiamare questi modelli?</h2><p>Statistiche cumulative su tutte le esecuzioni passate di ogni modello, in ogni progetto: token, latenza, tasso d’errore e un campione di memoria preso da Ollama subito dopo la prima risposta di ogni run.</p></div><button class="ghost" id="refresh-performance" type="button">Aggiorna</button></div>
+      <div id="performance-empty" class="empty-state">Nessun modello configurato, o nessuna esecuzione ancora avviata.</div>
+      <div id="performance-list" class="performance-list hidden"></div>
+    </section>
+  </main>
+</div>
+
+<dialog id="variant-dialog">
+  <form method="dialog" class="dialog-card" id="variant-form">
+    <button class="dialog-close" value="cancel" aria-label="Chiudi">×</button>
+    <span class="eyebrow">CONTROLLED MUTATION</span><h3>Nuova variante</h3>
+    <input type="hidden" name="question_id">
+    <label>Nome<input name="name" required placeholder="Negazione italiana"></label>
+    <div class="form-row"><label>Asse modificato<select name="mutation_type"><option value="paraphrase">Riformulazione</option><option value="negation">Negazione</option><option value="ambiguity">Ambiguità</option><option value="language">Lingua</option><option value="examples">Esempi</option><option value="order">Ordine</option><option value="format">Formato</option><option value="length">Lunghezza</option><option value="manual">Altro controllato</option></select></label><label>Lingua<input name="language" value="it"></label></div>
+    <label>Testo completo<textarea name="text" rows="5" required></textarea></label>
+    <button class="primary" value="default" type="submit">Registra mutazione</button>
+  </form>
+</dialog>
+
+<dialog id="question-edit-dialog">
+  <form method="dialog" class="dialog-card" id="question-edit-form">
+    <button class="dialog-close" value="cancel" aria-label="Chiudi">×</button>
+    <span class="eyebrow">EDIT CANONICAL QUESTION</span><h3>Modifica domanda</h3>
+    <input type="hidden" name="question_id">
+    <div class="form-row"><label>Etichetta<input name="label" required maxlength="120"></label><label>Chiave breve<input name="key" required maxlength="60"></label></div>
+    <label>Descrizione<input name="description" maxlength="1000"></label>
+    <label>Domanda canonica<textarea name="text" rows="5" required maxlength="2000"></textarea></label>
+    <label>Lingua<input name="language" maxlength="12" required></label>
+    <p class="hint">I run già conclusi conservano il prompt esatto usato al momento dell’esecuzione. La modifica vale per i run successivi.</p>
+    <button class="primary" value="default" type="submit">Salva modifiche</button>
+  </form>
+</dialog>
+
+<dialog id="run-rename-dialog">
+  <form method="dialog" class="dialog-card" id="run-rename-form">
+    <button class="dialog-close" type="button" id="run-rename-cancel" aria-label="Chiudi">×</button>
+    <span class="eyebrow">CLAIM LEDGER</span><h3>Rinomina esecuzione</h3>
+    <input type="hidden" name="run_id">
+    <label>Nome<input name="name" required maxlength="160"></label>
+    <button class="primary" value="default" type="submit">Salva nome</button>
+  </form>
+</dialog>
+
+<dialog id="run-duplicate-dialog">
+  <form method="dialog" class="dialog-card" id="run-duplicate-form">
+    <button class="dialog-close" type="button" id="run-duplicate-cancel" aria-label="Chiudi">×</button>
+    <span class="eyebrow">CLAIM LEDGER</span><h3>Duplica esecuzione</h3>
+    <input type="hidden" name="run_id">
+    <label>Nome della copia<input name="name" maxlength="160" placeholder="Lascia vuoto per “… (copia)”"></label>
+    <p class="hint">Riparte con la stessa configurazione — provider, domande, varianti, ripetizioni, temperatura e seed — e si avvia subito.</p>
+    <button class="primary" value="default" type="submit">Duplica e avvia</button>
+  </form>
+</dialog>
+
+<dialog id="trash-dialog">
+  <div class="dialog-card trash-card">
+    <button class="dialog-close" id="close-trash" type="button" aria-label="Chiudi">×</button>
+    <span class="eyebrow">RECOVERABLE LOCAL STORAGE</span><h3>Cestino</h3>
+    <p class="hint">Nessun file viene cancellato: puoi ripristinare progetti e immagini in qualsiasi momento.</p>
+    <h4>Progetti</h4><div id="trash-projects" class="trash-list"></div>
+    <h4>Immagini</h4><div id="trash-images" class="trash-list"></div>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "file": "case-01.png",
+      "light": "yes",
+      "crowded": "no",
+      "night": "yes"
+    },
+    {
+      "file": "case-02.png",
+      "light": "no",
+      "crowded": "no",
+      "night": "yes"
+    },
+    {
+      "file": "case-03.png",
+      "light": "yes",
+      "crowded": "yes",
+      "night": "yes"
+    },
+    {
+      "file": "case-04.png",
+      "light": "no",
+      "crowded": "yes",
+      "night": "yes"
+    },
+    {
+      "file": "case-05.png",
+      "light": "yes",
+      "crowded": "no",
+      "night": "no"
+    },
+    {
+      "file": "case-06.png",
+      "light": "no",
+      "crowded": "no",
+      "night": "no"
+    },
+    {
+      "file": "case-07.png",
+      "light": "yes",
+      "crowded": "yes",
+      "night": "yes"
+    },
+    {
+      "file": "case-08.png",
+      "light": "no",
+      "crowded": "yes",
+      "night": "yes"
+    },
+    {
+      "file": "case-09.png",
+      "light": "yes",
+      "crowded": "no",
+      "night": "no"
+    },
+    {
+      "file": "case-10.png",
+      "light": "no",
+      "crowded": "no",
+      "night": "yes"
+    },
+    {
+      "file": "case-11.png",
+      "light": "yes",
+      "crowded": "yes",
+      "night": "yes"
+    },
+    {
+      "file": "case-12.png",
+      "light": "no",
+      "crowded": "no",
+      "night": "yes"
+    }
+  ]
+}
