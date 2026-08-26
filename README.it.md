@@ -4,6 +4,8 @@
 
 FragileVision è un laboratorio locale per valutare modelli visivi e, contemporaneamente, la fragilità del benchmark con cui vengono valutati.
 
+[**Leggi l’articolo**](https://VellBlue.github.io/fragilevision/it/) · [**Read it in English**](https://VellBlue.github.io/fragilevision/)
+
 ## Avvio
 
 Richiede Python 3.11 o successivo e non installa dipendenze:

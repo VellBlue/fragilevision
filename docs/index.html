@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A benchmark should be able to fail its own claim — FragileVision</title>
+  <meta name="description" content="Why I built FragileVision: a local laboratory that tests the benchmark, the sample and the ground truth alongside the vision-language model.">
+  <meta name="theme-color" content="#090c0d">
+  <link rel="canonical" href="https://vellblue.github.io/fragilevision/">
+  <link rel="alternate" hreflang="it" href="https://vellblue.github.io/fragilevision/it/">
+  <link rel="alternate" hreflang="en" href="https://vellblue.github.io/fragilevision/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#article">Skip to the article</a>
+
+  <nav class="topbar" aria-label="Main navigation">
+    <a class="brand" href="https://github.com/VellBlue/fragilevision">
+      <span class="mark" aria-hidden="true"></span>
+      <span>FragileVision</span>
+    </a>
+    <div class="toplinks">
+      <a aria-current="page" href="./">English</a>
+      <a href="it/" lang="it">Italiano</a>
+      <a href="https://github.com/VellBlue/fragilevision">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <p class="eyebrow">An evaluation tool built after an evaluation failed</p>
+      <h1>A benchmark should be able to fail its own claim</h1>
+      <p class="deck">FragileVision does not just ask whether a model was right. It asks whether the question, the sample and the people who labelled it earned the right to say so.</p>
+      <p class="byline">Simone · August 2026 · local software, public method · <a href="it/" lang="it">Leggi in italiano</a></p>
+    </div>
+
+    <aside class="ledger" aria-label="Evidence ledger">
+      <header><span>Evidence ledger</span><span>FV / 0.15</span></header>
+      <div class="ledger-row"><span>Question</span><strong>mutated, not assumed</strong></div>
+      <div class="ledger-row"><span>Sample</span><strong>audited by scene</strong></div>
+      <div class="ledger-row"><span>Labels</span><strong>disagreement retained</strong></div>
+      <div class="ledger-row warn"><span>Claim</span><strong>allowed to fail</strong></div>
+    </aside>
+  </header>
+
+  <main id="article">
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">01 · Why this exists</p>
+        <h2>I went looking for the best model. I found a problem with the question.</h2>
+        <p class="lead">The first version of this work was a benchmark on my own photographs. I expected model size to explain the mistakes. It did not.</p>
+        <p>A four-billion parameter model with a short, plain question beat an eight-billion parameter model with the original wording. Negation could turn a strong result into an almost constant answer. A single whitespace change in a prefill could decide whether a model returned one word, a paragraph, or nothing at all.</p>
+        <p>I wrote that story in <a href="https://vellblue.github.io/vlm-photo-bench/">How you word the question matters more than model size</a>. The article ended with a methodological problem: if a score can move that much while the photographs and weights stay fixed, then holding one prompt fixed is not a neutral choice. The prompt is part of the instrument.</p>
+        <p>The scripts behind that benchmark could prove the point once. They could not make the discipline repeatable. FragileVision is the tool I wanted after the result made me distrust my own setup.</p>
+
+        <div class="rule">
+          <b>The rule</b>
+          <p>A result is evidence only after the ways it could be an artefact have been made visible.</p>
+        </div>
+
+        <p>That sounds severe. It is meant to be. Models already produce answers with an air of certainty. Evaluation software should not add another layer of false confidence.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">02 · Three places a score breaks</p>
+        <h2>The model is only one of the moving parts</h2>
+        <p>Most leaderboards vary the model and freeze everything else. FragileVision also freezes the model and puts pressure on the evaluation around it.</p>
+      </div>
+
+      <div class="wide proof-grid">
+        <article class="proof">
+          <span class="index">01</span>
+          <h3>The wording</h3>
+          <p>The same semantic question is asked through controlled changes of language, negation, examples, order, format and length. Prompt Fragility measures when the verdict moves.</p>
+        </article>
+        <article class="proof">
+          <span class="index">02</span>
+          <h3>The sample</h3>
+          <p>Near duplicates, dominant scenes, class imbalance and train/test leaks can make repetition look like evidence. The audit treats the scene, not the file, as the unit of independence.</p>
+        </article>
+        <article class="proof">
+          <span class="index">03</span>
+          <h3>The ground truth</h3>
+          <p>A label written by one person is an opinion with a database row. Blind review, named judgements, agreement coefficients and adjudication show how much of it the panel actually shares.</p>
+        </article>
+      </div>
+
+      <div class="measure">
+        <p>These failures should not be folded into one “robustness” number. A model that changes between identical calls is not the same problem as a prompt that changes its answer. A panel that cannot agree is not model error. A burst of twenty frames is not twenty independent observations.</p>
+        <p>FragileVision keeps those surfaces separate even when that makes the final report less tidy.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">03 · The workflow</p>
+        <h2>A claim leaves a paper trail</h2>
+        <p class="lead">The application is a ledger before it is a dashboard. It records what happened closely enough that a later result can be challenged instead of merely admired.</p>
+
+        <div class="workflow" aria-label="FragileVision evidence workflow">
+          <div class="flow-row">
+            <b>01</b><h3>Import locally</h3>
+            <p>Images are copied into managed storage, validated and deduplicated by SHA-256. Nothing is uploaded.</p>
+          </div>
+          <div class="flow-row">
+            <b>02</b><h3>Audit the sample</h3>
+            <p>File integrity, resolution, balance, source groups, perceptual similarity and split leakage are checked before a run.</p>
+          </div>
+          <div class="flow-row">
+            <b>03</b><h3>Build ground truth</h3>
+            <p>Reviewers work blind. Unanimity and strict majority can settle a case; ties and pluralities cannot. Adjudication is added, never used to erase disagreement.</p>
+          </div>
+          <div class="flow-row">
+            <b>04</b><h3>Stress the question</h3>
+            <p>Prompt variants preserve the intended meaning while changing the linguistic surface. Repetitions measure drift separately.</p>
+          </div>
+          <div class="flow-row">
+            <b>05</b><h3>Run local models</h3>
+            <p>Ollama and private OpenAI-compatible endpoints are allowed. Public inference endpoints are refused by design.</p>
+          </div>
+          <div class="flow-row">
+            <b>06</b><h3>Publish the limits</h3>
+            <p>The Claim Card carries intervals, baselines, coverage, parser failures, paired tests, evidence checks and the fingerprint of the evaluation.</p>
+          </div>
+        </div>
+
+        <p>Every model response keeps the exact final prompt, adapter, seed, temperature, raw output, parser decision, latency and token counts. The replay bundle is intentionally boring: CSV, JSON, Markdown, local paths and hashes. Reproducibility tends to look like paperwork.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">04 · The embarrassing zero</p>
+        <h2>The audit once reported a clean dataset it had never looked at</h2>
+        <p>The perceptual hash originally depended on <code>sips</code>, a macOS command. On Linux and Windows the decoder returned nothing. No hashes meant no visual comparisons; no comparisons meant zero near-duplicate pairs.</p>
+        <p>The interface showed the zero without explaining where it came from.</p>
+        <p>This was the worst possible bug for a project built around methodological honesty. The same demo folder produced 34 near-duplicate pairs on macOS and none on another operating system. The second answer looked reassuring and was false.</p>
+      </div>
+
+      <div class="wide audit-example">
+        <div class="audit-copy">
+          <h3>Zero can mean “nothing found”. It can also mean “nothing measured”.</h3>
+          <p>The fix has two layers: Pillow now provides a decoder outside macOS, and the audit raises a high-severity warning whenever an image has no perceptual fingerprint. The result tile shows a dash, not a clean zero, when no comparison was possible.</p>
+        </div>
+        <div class="audit-panel">
+          <div class="warning">
+            <b>High · visual analysis</b>
+            None of the 12 images has a perceptual fingerprint. The near-duplicate check compared nothing; zero pairs does not mean a clean dataset.
+          </div>
+          <table class="engine-table">
+            <caption>Same 12 intentionally repeated images. Decoder-specific hashes are never mixed in one cache.</caption>
+            <thead><tr><th>demo dataset</th><th>pairs</th><th>unhashed</th></tr></thead>
+            <tbody>
+              <tr><td>macOS · sips</td><td class="good">34</td><td>0</td></tr>
+              <tr><td>Linux · Pillow</td><td class="good">31</td><td>0</td></tr>
+              <tr><td>without decoder</td><td class="bad">—</td><td class="bad">12</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="measure">
+        <p>The two decoders do not produce identical hashes. I measured that too: over 200 photographs they differed by 2.1 bits on average and by at most 7 bits out of 64. Identical-pair detection stayed close; the wider “same scene” boundary moved enough that pretending the engines were interchangeable would be dishonest.</p>
+        <p>So the engine is named in the audit and included in the feature-cache version. Comparisons across machines have to compare like with like. The near-duplicate threshold was not moved to make the fallback look better.</p>
+        <p>This section is here because the mistake says more about the software than another feature list would. FragileVision did not begin perfectly honest. It had to be audited by its own rule.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">05 · Refusals</p>
+        <h2>Some outputs are better left blank</h2>
+        <p class="lead">A useful evaluation tool needs a vocabulary for “I do not know”, “I could not compare this” and “these samples are not independent”.</p>
+
+        <div class="refusal-list">
+          <div class="refusal"><b>×</b><p>No verdict hidden inside ambiguous prose.<span>If an answer contains more than one possible label, the parser records it as unreadable instead of choosing the convenient word.</span></p></div>
+          <div class="refusal"><b>×</b><p>No 100% score from one easy answer.<span>Models in the Arena are ranked only on units every selected model answered readably. Coverage remains beside the score.</span></p></div>
+          <div class="refusal"><b>×</b><p>No random split through one scene.<span>Source groups and near-duplicate clusters move together. If only one independent scene exists, the split is refused rather than fabricated.</span></p></div>
+          <div class="refusal"><b>×</b><p>No forced consensus.<span>A tie remains a conflict. An adjudicator signs a new decision; the original reviewers are not overwritten.</span></p></div>
+          <div class="refusal"><b>×</b><p>No global model ranking.<span>The Claim Card describes one model–dataset–prompt system. It does not turn a local observation into a universal league table.</span></p></div>
+        </div>
+
+        <p>This restraint has a cost. There are more dashes, warnings and insufficient-evidence grades than users expect from a dashboard. I think that is a feature. A blank cell with a reason is more informative than a polished number with no denominator.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">06 · Footprint</p>
+        <h2>Local first is an architectural constraint</h2>
+        <p>The core has no required runtime dependencies. It is Python 3.11, SQLite and a static interface served on loopback. Pillow is optional on macOS and required elsewhere for the visual audit. The application rejects public model endpoints and does not send telemetry.</p>
+        <p>That choice is not branding. Evaluation datasets are often the very material that cannot be uploaded: unpublished photographs, internal screenshots, medical images, prototypes, client work. “Private by policy” is weaker than “there is no code path to the public API”.</p>
+
+        <div class="terminal" aria-label="Installation commands">
+          <header>Local installation</header>
+          <pre><code><span class="prompt">$</span> git clone https://github.com/VellBlue/fragilevision.git
+<span class="prompt">$</span> cd fragilevision
+<span class="prompt">$</span> python -m pip install -e ".[images]"  <span class="comment"># Linux / Windows visual audit</span>
+<span class="prompt">$</span> python -m fragilevision
+
+<span class="comment"># then open http://127.0.0.1:7331</span></code></pre>
+        </div>
+
+        <p>There is also a macOS bundle built from the same package. Windows and Linux use the Python entry point. The visual fallback has been exercised under a simulated Linux platform and in the test suite; it has not yet been run on a physical Windows or Linux machine. That distinction belongs in the article, not in a future bug report.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">07 · What this does not prove</p>
+        <h2>The tool can expose weak evidence. It cannot turn it into strong evidence.</h2>
+        <p>FragileVision can tell you that your classes are imbalanced. It cannot choose a defensible population for you. It can find two frames that look almost identical. It cannot know whether the distinction matters to your domain. It can measure reviewer disagreement. It cannot repair a vague concept by statistics.</p>
+
+        <div class="limits">
+          <article class="limit"><b>Heuristic</b><p>The Evidence Gate is a transparent checklist, not peer review and not a proof of validity.</p></article>
+          <article class="limit"><b>Calibration</b><p>The 12-bit near-duplicate threshold was calibrated on one real photographic archive. Other domains should challenge it.</p></article>
+          <article class="limit"><b>Scale</b><p>The current pairwise visual comparison is deliberately capped. Large datasets need a different indexing strategy.</p></article>
+          <article class="limit"><b>Maturity</b><p>Version 0.15 is a research preview. The storage format migrates forward, but it may still change before 1.0.</p></article>
+        </div>
+
+        <p>There is a synthetic stressor and a rights-safe geometric dataset so the whole workflow can be explored without a model or private images. The demo intentionally triggers its own near-duplicate warning. It is there to show that the audit works, not to provide a benchmark result.</p>
+        <p>The larger ambition is modest: make it harder to publish a number without also publishing what the number could not see.</p>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="wide">
+        <p class="section-tag">Open source · Apache 2.0 · entirely local</p>
+        <h2>Every number should confess its limits.</h2>
+        <p>FragileVision is usable now, inspectable line by line, and still early enough that disagreement is useful.</p>
+        <a class="button" href="https://github.com/VellBlue/fragilevision">Read the code on GitHub ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>FragileVision · August 2026</span>
+    <span>No analytics · no cookies · no external assets</span>
+  </footer>
+</body>
+</html>

@@ -6,6 +6,8 @@ FragileVision is a local-first evidence laboratory for vision-language models. I
 
 No cloud account. No telemetry. No uploaded dataset. No opaque aggregate score.
 
+[**Read the article**](https://VellBlue.github.io/fragilevision/) · [**Leggilo in italiano**](https://VellBlue.github.io/fragilevision/it/)
+
 [Italian documentation](README.it.md)
 
 ## Why this is different
