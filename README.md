@@ -56,7 +56,11 @@ Every run stores the exact final prompt, model adapter, seed, temperature, raw o
 
 ## Quick start
 
-Requirements: Python 3.11 or newer. There are no required runtime dependencies. Pillow is optional and only used to downscale oversized inputs on systems without macOS `sips`.
+Requirements: Python 3.11 or newer. There are no required runtime dependencies.
+
+Outside macOS, install the optional extra: `pip install 'fragilevision[images]'`. The visual analysis — perceptual hash, near-duplicate detection, visual signals in the diagnosis — needs a local decoder, either macOS `sips` or Pillow. With neither, those checks cannot run: the audit says so as a high-severity warning instead of reporting an unexamined dataset as clean. Pillow also handles downscaling oversized inputs where `sips` is absent.
+
+The two decoders do not agree pixel for pixel. Measured over 200 photographs, their hashes differ by at most 7 bits out of 64 (mean 2.1): identical-pair detection stays largely stable (98% agreement) but roughly a quarter of the "same scene" pairs move. The feature cache is keyed by engine so one database never mixes readings, and the audit names the engine behind its numbers — comparisons of near-duplicate counts across machines should compare like with like.
 
 ```bash
 git clone https://github.com/VellBlue/fragilevision.git
@@ -78,6 +82,11 @@ Generate the rights-safe geometric demo dataset:
 python3 scripts/create_demo.py
 ```
 
+The 12 demo images deliberately repeat six visual configurations while remaining
+byte-distinct. Importing `demo-images` as a plain folder is therefore expected to
+raise a high-severity near-duplicate warning. This is a built-in demonstration of
+the audit, not a claim that the sample is suitable evidence for a real evaluation.
+
 ### macOS app
 
 ```bash
@@ -88,10 +97,22 @@ Builds `dist/FragileVision.app` — a real, double-clickable, Dock-launchable
 app — using only tools already on macOS (`sips`, `iconutil`, `codesign`). No
 bundler and no `pip install`: the payload is a plain copy of the
 `fragilevision` package, since it has zero required runtime dependencies.
-Drag the result to `/Applications` or the Dock. No terminal is ever opened;
-startup failures show a native alert, and everything else — including the
-server's own request log — goes to
+Move the result to `/Applications`. To keep it in the Dock, drag
+`FragileVision.app` there directly from Finder: the running server is a background
+process, so it does not create a Dock or Cmd-Tab icon that can be pinned. Starting
+the app opens no terminal; startup failures show a native alert, and everything
+else — including the server's own request log — goes to
 `~/Library/Logs/FragileVision/fragilevision.log`.
+
+The zero-dependency launcher has no Cocoa **Quit** command. Closing the browser
+does not stop the local server. To stop the app, run:
+
+```bash
+pkill -f "python.*-m fragilevision --port 7331"
+```
+
+This background-only behavior is the tradeoff that keeps the bundle a plain
+Python package with no native wrapper.
 
 On a fresh install with no provider configured yet, the app checks Ollama's
 own default address and registers only the models Ollama itself reports as

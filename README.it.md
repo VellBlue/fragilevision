@@ -12,9 +12,33 @@ Richiede Python 3.11 o successivo e non installa dipendenze:
 python3 -m fragilevision
 ```
 
+Fuori da macOS serve l’extra opzionale: `pip install 'fragilevision[images]'`.
+L’analisi visiva — impronta percettiva, quasi duplicati, segnali visivi della
+diagnosi — ha bisogno di un decodificatore locale, `sips` di macOS oppure
+Pillow. Senza nessuno dei due quei controlli non girano, e l’audit lo dichiara
+con un avviso di severità alta invece di far passare per pulito un dataset che
+non ha guardato. I due motori non coincidono al pixel: su 200 fotografie gli
+hash differiscono al più di 7 bit su 64 (media 2,1): il riconoscimento delle
+coppie identiche resta sostanzialmente stabile (98% di accordo), ma si sposta circa un
+quarto delle coppie “stessa scena”. La cache delle feature è indicizzata per
+motore, così un database non mescola mai letture incompatibili, e l’audit dice
+quale motore ha prodotto i numeri.
+
 L’interfaccia si apre su `http://127.0.0.1:7331`.
 
 Nelle sezioni **Dataset** e **Modelli** sono presenti selettori nativi per scegliere una cartella senza digitare il percorso. Per Ollama e server MLX/OpenAI-compatible è disponibile anche **Rileva modelli**, che popola localmente l’elenco esposto dal provider privato.
+
+### Dataset demo
+
+```bash
+python3 scripts/create_demo.py
+```
+
+Le 12 immagini geometriche ripetono intenzionalmente sei configurazioni visive,
+pur restando file distinti a livello di byte. Importare `demo-images` come una
+normale cartella deve quindi produrre un avviso di severità alta sui quasi
+duplicati: è una dimostrazione incorporata dell’audit, non un’affermazione che il
+campione sia adatto a sostenere una valutazione reale.
 
 ### App macOS
 
@@ -26,10 +50,22 @@ Costruisce `dist/FragileVision.app` — un’app vera, apribile con un doppio cl
 o dal Dock — usando solo strumenti già presenti su macOS (`sips`, `iconutil`,
 `codesign`). Nessun bundler, nessun `pip install`: il pacchetto `fragilevision`
 non ha dipendenze obbligatorie, quindi il payload è una semplice copia del
-codice. Trascina il risultato su `/Applications` o sul Dock. Nessun terminale
-si apre mai; un errore fatale all’avvio mostra un avviso nativo, e tutto il
-resto — incluso il log delle richieste del server — va in
+codice. Sposta il risultato in `/Applications`. Per conservarlo nel Dock,
+trascina `FragileVision.app` direttamente dal Finder: il server in esecuzione è
+un processo in background e non crea un’icona nel Dock o in Cmd-Tab da poter
+fissare. L’avvio non apre alcun terminale; un errore fatale mostra un avviso
+nativo, e tutto il resto — incluso il log delle richieste del server — va in
 `~/Library/Logs/FragileVision/fragilevision.log`.
+
+Il launcher senza dipendenze non ha un comando Cocoa **Esci**. Chiudere il browser
+non ferma il server locale. Per arrestare l’app esegui:
+
+```bash
+pkill -f "python.*-m fragilevision --port 7331"
+```
+
+Il funzionamento solo in background è il compromesso che permette al bundle di
+restare un semplice pacchetto Python, senza wrapper nativo.
 
 Alla prima installazione, senza nessun provider configurato, l’app controlla
 l’indirizzo di default di Ollama e registra solo i modelli che Ollama stesso

@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 from fragilevision.core import hamming_distance, perceptual_hash
-from fragilevision.dataset import (analyze_balance, analyze_resolution, build_split,
+from fragilevision.dataset import (analyze_balance, analyze_resolution, audit_dataset, build_split,
                                    find_near_duplicates, inspect_files, inspect_split)
 
 
@@ -84,6 +84,36 @@ class DatasetTests(unittest.TestCase):
         report = analyze_resolution(images)
         self.assertEqual(report["outlier_count"], 1)
         self.assertEqual(report["downscaled_for_model"], 8)
+
+
+class MissingFingerprintTests(unittest.TestCase):
+    """No perceptual hash means no comparison — which must never read as "clean"."""
+
+    def audit(self, hashes):
+        images = [image(index, f"scena-{index}") for index in range(1, 5)]
+        return audit_dataset(images, [], [], hashes)
+
+    def test_a_dataset_without_hashes_is_reported_not_passed_over(self):
+        report = self.audit({index: "" for index in range(1, 5)})
+        self.assertEqual(report["near_duplicates"]["unhashed"], 4)
+        self.assertEqual(report["near_duplicates"]["comparable"], 0)
+        visual = [item for item in report["warnings"] if item["area"] == "analisi visiva"]
+        self.assertEqual(len(visual), 1)
+        self.assertEqual(visual[0]["severity"], "alta")
+        self.assertIn("nessuna delle 4", visual[0]["text"])
+
+    def test_a_partial_failure_says_how_many_images_it_left_out(self):
+        report = self.audit({1: perceptual_hash(9, 8, [x / 16 for _ in range(8) for x in range(9)]),
+                             2: "", 3: "", 4: ""})
+        visual = [item for item in report["warnings"] if item["area"] == "analisi visiva"]
+        self.assertEqual(len(visual), 1)
+        self.assertIn("3 immagini su 4", visual[0]["text"])
+
+    def test_a_fully_hashed_dataset_raises_nothing(self):
+        report = self.audit({1: "0f0f0f0f0f0f0f0f", 2: "f0f0f0f0f0f0f0f0",
+                             3: "00ff00ff00ff00ff", 4: "ff00ff00ff00ff00"})
+        self.assertEqual(report["near_duplicates"]["unhashed"], 0)
+        self.assertFalse([item for item in report["warnings"] if item["area"] == "analisi visiva"])
 
 
 if __name__ == "__main__":

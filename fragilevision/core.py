@@ -22,7 +22,10 @@ SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 MAX_IMAGE_BYTES = 80 * 1024 * 1024
 MAX_IMPORT_FILES = 20_000
 MAX_PIXEL_COUNT = 100_000_000
-FEATURE_EXTRACTOR_VERSION = "sips-bmp-v2"
+# One version per decoder, never a shared one: sips and Pillow do not produce the
+# same thumbnail (measured on 200 images, up to 7 bits of difference in the hash),
+# so cached features from the two engines must not be compared with one another.
+FEATURE_EXTRACTOR_VERSIONS = {"sips": "sips-bmp-v2", "pillow": "pillow-bilinear-v1"}
 HASH_GRID_ROWS, HASH_GRID_COLUMNS = 8, 9
 MODEL_INPUT_MAX_EDGE = 2048
 MODEL_INPUT_MAX_BYTES = 3 * 1024 * 1024
@@ -92,10 +95,69 @@ def image_dimensions(path: Path) -> tuple[int | None, int | None]:
     return (None, None)
 
 
-def _thumbnail_pixels(path: Path, edge: int = 32) -> tuple[int, int, list[tuple[int, int, int]]] | None:
-    """Decode a small local BMP thumbnail into top-down RGB rows."""
-    if sys.platform != "darwin" or not Path("/usr/bin/sips").is_file():
+def feature_engine() -> str | None:
+    """Which local decoder can build thumbnails here: "sips", "pillow" or None.
+
+    macOS is served first by sips so that a database built before Pillow was
+    installed keeps its cached features valid. Elsewhere the optional Pillow
+    dependency is the only way in, and where neither exists the visual analysis
+    is genuinely unavailable — the audit says so rather than reporting zero
+    near-duplicates as if the dataset were clean.
+    """
+    if sys.platform == "darwin" and Path("/usr/bin/sips").is_file():
+        return "sips"
+    try:
+        import PIL  # type: ignore[import-not-found]  # noqa: F401
+    except ImportError:
         return None
+    return "pillow"
+
+
+def feature_extractor_version() -> str:
+    """Cache key for the visual features, engine included.
+
+    Two machines with different decoders will disagree slightly on the perceptual
+    hash. Keying the cache by engine keeps a single database from mixing the two;
+    it does not make the two machines agree, which is why the audit reports which
+    engine produced the numbers.
+    """
+    return FEATURE_EXTRACTOR_VERSIONS.get(feature_engine() or "", "none")
+
+
+def _thumbnail_pixels(path: Path, edge: int = 32) -> tuple[int, int, list[tuple[int, int, int]]] | None:
+    """Decode a small local thumbnail into top-down RGB rows."""
+    engine = feature_engine()
+    if engine == "sips":
+        return _thumbnail_pixels_sips(path, edge)
+    if engine == "pillow":
+        return _thumbnail_pixels_pillow(path, edge)
+    return None
+
+
+def _thumbnail_pixels_pillow(path: Path, edge: int) -> tuple[int, int, list[tuple[int, int, int]]] | None:
+    """Same square thumbnail as sips, decoded in-process by Pillow."""
+    try:
+        from PIL import Image  # type: ignore[import-not-found]
+    except ImportError:
+        return None
+    try:
+        with Image.open(path) as opened:
+            # Aspect ratio is deliberately not preserved: sips -z stretches to the
+            # requested box, and the hash must not depend on which engine ran.
+            sample = opened.convert("RGB").resize((edge, edge), Image.Resampling.BILINEAR)
+            # tobytes() rather than getdata(): three bytes per pixel, row-major and
+            # top-down, and it is not on Pillow's deprecation list.
+            raw = sample.tobytes()
+            pixels = [(raw[index], raw[index + 1], raw[index + 2]) for index in range(0, len(raw), 3)]
+    except (OSError, ValueError):
+        return None
+    if len(pixels) != edge * edge:
+        return None
+    return edge, edge, pixels
+
+
+def _thumbnail_pixels_sips(path: Path, edge: int) -> tuple[int, int, list[tuple[int, int, int]]] | None:
+    """Decode a small local BMP thumbnail into top-down RGB rows."""
     try:
         with tempfile.TemporaryDirectory(prefix="fragilevision-feature-") as directory:
             output = Path(directory) / "sample.bmp"

@@ -1,5 +1,39 @@
 # Changelog
 
+## Unreleased
+
+Visual analysis outside macOS, and an audit that admits when it has none.
+
+- **The silent false negative is gone.** `_thumbnail_pixels()` was bound to
+  macOS `sips`, so on Linux and Windows the perceptual hash and every visual
+  signal came back empty — and an empty comparison produced zero near-duplicate
+  pairs, no warning, and a dataset that looked clean. On the demo dataset the
+  same button reported 34 near-identical pairs at high severity on macOS and
+  nothing at all elsewhere.
+- **Pillow fallback.** `feature_engine()` now picks `sips` on macOS and Pillow
+  everywhere it is installed, mirroring what `prepare_model_image()` already
+  did. Off macOS, `pip install 'fragilevision[images]'` restores the visual
+  analysis: the demo dataset goes from 0 pairs to 31, against 34 with `sips`.
+- **The engine is part of the cache key.** The two decoders do not produce the
+  same thumbnail: measured on 200 photographs, their hashes differ by at most
+  7 bits out of 64 (mean 2.1). Identical-pair detection barely moves (98%
+  agreement) but about a quarter of the "same scene" pairs do, so
+  `image_features` is now keyed by `sips-bmp-v2` or `pillow-bilinear-v1` and a
+  single database can never compare readings from two engines. Existing macOS
+  caches keep their key and stay valid. `NEAR_DUPLICATE_THRESHOLD` was left
+  alone: it is calibrated against a real archive, not against a fallback.
+- **When no decoder exists at all**, the audit raises a high-severity warning
+  naming the cause and the fix, and the near-duplicate tile shows "—" with
+  "analisi visiva non disponibile" instead of a reassuring zero. The tile also
+  names the engine behind its numbers, and counts any image the decoder failed
+  to open.
+- **The demo now explains its own warning.** Its 12 geometric images deliberately
+  contain six repeated visual configurations, so both the generator and the quick
+  start say that a high-severity near-duplicate finding is expected and useful.
+- **The macOS bundle documentation matches its background-only launcher.** The app
+  must be dragged from Finder to the Dock because it creates no running Dock icon;
+  closing the browser does not stop it, and the documented `pkill` command does.
+
 ## 0.15.0 — 2026-08-26
 
 Standalone macOS app. Every previous release still needed a terminal open to

@@ -13,7 +13,8 @@ import random
 import statistics
 from typing import Any
 
-from .core import (MODEL_INPUT_MAX_EDGE, hamming_distance, image_dimensions, sha256_file)
+from .core import (MODEL_INPUT_MAX_EDGE, feature_engine, hamming_distance, image_dimensions,
+                   sha256_file)
 
 
 # Calibrated against a real archive: two exports of one photograph land at 0, two
@@ -168,8 +169,10 @@ def find_near_duplicates(images: list[dict[str, Any]], hashes: dict[int, str],
     """
     entries = [(int(image["id"]), hashes.get(int(image["id"])) or "", image) for image in images]
     comparable = [entry for entry in entries if entry[1]]
+    engine = feature_engine()
     if len(comparable) > MAX_PAIRWISE_IMAGES:
         return {"scanned": False, "threshold": threshold, "comparable": len(comparable),
+                "unhashed": len(entries) - len(comparable), "engine": engine,
                 "reason": f"Confronto a coppie non eseguito sopra {MAX_PAIRWISE_IMAGES} immagini",
                 "pairs": [], "pair_count": 0, "cross_group_pairs": 0, "identical_pairs": 0}
     pairs = []
@@ -191,6 +194,7 @@ def find_near_duplicates(images: list[dict[str, Any]], hashes: dict[int, str],
     cross = [pair for pair in pairs if not pair["same_group"]]
     return {
         "scanned": True, "threshold": threshold, "identical_threshold": IDENTICAL_THRESHOLD,
+        "engine": engine,
         "comparable": len(comparable), "unhashed": len(entries) - len(comparable),
         "pairs": pairs[:120], "pair_count": len(pairs),
         "identical_pairs": sum(1 for pair in pairs if pair["distance"] <= IDENTICAL_THRESHOLD),
@@ -314,6 +318,26 @@ def audit_dataset(images: list[dict[str, Any]], questions: list[dict[str, Any]],
         warnings.append({"severity": "alta", "area": "integrità",
                          "text": f"{integrity['changed_count']} immagini sono cambiate dopo l’importazione: "
                                  "il fingerprint del dataset non descrive più i file su disco."})
+    unhashed = int(duplicates.get("unhashed") or 0)
+    if unhashed:
+        # Without this the page shows zero near-duplicate pairs and no warning at
+        # all, which reads as a clean sample. It is the one failure mode where
+        # silence is a wrong answer rather than a missing one.
+        engine = duplicates.get("engine")
+        cause = (f"il decodificatore locale ({engine}) non è riuscito ad aprirle" if engine else
+                 "su questo sistema non c’è un decodificatore locale: serve macOS (sips) "
+                 "oppure Pillow installato (pip install pillow)")
+        if unhashed >= len(images):
+            warnings.append({"severity": "alta", "area": "analisi visiva",
+                             "text": f"nessuna delle {len(images)} immagini ha un’impronta percettiva: "
+                                     "il controllo dei quasi duplicati non ha confrontato niente e "
+                                     "zero coppie qui non vuol dire dataset pulito — "
+                                     f"{cause}."})
+        else:
+            warnings.append({"severity": "alta", "area": "analisi visiva",
+                             "text": f"{unhashed} immagini su {len(images)} sono senza impronta "
+                                     "percettiva: restano fuori dal controllo dei quasi duplicati e "
+                                     f"dai segnali visivi della diagnosi — {cause}."})
     if duplicates["scanned"] and duplicates["cross_group_pairs"]:
         warnings.append({"severity": "alta", "area": "duplicati",
                          "text": f"{duplicates['cross_group_pairs']} coppie quasi identiche stanno in gruppi "

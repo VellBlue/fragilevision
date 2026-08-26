@@ -71,6 +71,8 @@ def main():
                       "crowded": "yes" if crowded else "no", "night": "yes" if night else "no"})
     (output / "ground-truth.json").write_text(json.dumps({"cases": cases}, indent=2), encoding="utf-8")
     print(f"Created {len(cases)} demo images in {output}")
+    print("Note: repeated visual configurations are intentional; the dataset should trigger "
+          "FragileVision's near-duplicate warning.")
 
 
 if __name__ == "__main__":

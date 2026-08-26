@@ -26,7 +26,7 @@ import zipfile
 
 from . import __version__
 from .agreement import calculate_agreement, consensus_summary, normalize_annotator, resolve_labels
-from .core import (FEATURE_EXTRACTOR_VERSION, analyze_image_features, evaluation_fingerprint,
+from .core import (analyze_image_features, evaluation_fingerprint, feature_extractor_version,
                    import_directory, prepare_model_image, slugify)
 from .dataset import audit_dataset, build_split
 from .db import Database
@@ -377,6 +377,9 @@ class App:
         """Cached visual signals and perceptual hashes for a set of images."""
         if not image_ids:
             return {}
+        # Cache reads, extraction and writes in one request must always refer to
+        # the same decoder/version pair.
+        extractor_version = feature_extractor_version()
         images: list[dict[str, Any]] = []
         for start in range(0, len(image_ids), 500):
             batch = image_ids[start:start + 500]
@@ -388,7 +391,7 @@ class App:
         for image in images:
             image_id = int(image["id"])
             cached = self.db.row("select * from image_features where image_id=? and extractor_version=?",
-                                 (image_id, FEATURE_EXTRACTOR_VERSION))
+                                 (image_id, extractor_version))
             if cached and cached["brightness"] is not None:
                 features[image_id] = {**cached, "width": image["width"], "height": image["height"]}
             else:
@@ -406,7 +409,7 @@ class App:
                 if values["brightness"] is not None:
                     self.db.execute("""insert or replace into image_features
                         (image_id,extractor_version,brightness,contrast,edge_density,saturation,phash,analyzed_at)
-                        values(?,?,?,?,?,?,?,?)""", (image_id, FEATURE_EXTRACTOR_VERSION, values["brightness"],
+                        values(?,?,?,?,?,?,?,?)""", (image_id, extractor_version, values["brightness"],
                         values["contrast"], values["edge_density"], values["saturation"],
                         values["phash"], self.db.now()))
                 features[image_id] = {**values, "width": image["width"], "height": image["height"]}

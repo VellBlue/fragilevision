@@ -26,7 +26,9 @@ Issues = "https://github.com/VellBlue/fragilevision/issues"
 Changelog = "https://github.com/VellBlue/fragilevision/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-# Only needed to downscale oversized inputs where macOS sips is absent.
+# Off macOS this is what makes the visual analysis possible at all — perceptual
+# hash, near-duplicate detection, visual signals — besides downscaling oversized
+# inputs. Without it, and without macOS sips, the audit reports the absence.
 images = ["Pillow>=10.0"]
 
 [project.scripts]

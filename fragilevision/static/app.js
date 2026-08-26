@@ -334,10 +334,14 @@ function renderAudit(audit) {
   const rotte = integrity.missing_count + integrity.unreadable_count + integrity.changed_count;
   $("#audit-integrity").textContent = `${integrity.healthy}/${integrity.checked}`;
   $("#audit-integrity-note").textContent = rotte ? `${rotte} da controllare` : (integrity.checksums_verified ? "checksum verificati" : "checksum non verificati");
-  $("#audit-duplicates").textContent = dupes.scanned ? dupes.pair_count : "—";
-  $("#audit-duplicates-note").textContent = dupes.scanned
-    ? `${dupes.identical_pairs} identiche · ${dupes.cross_group_pairs} fra gruppi diversi · soglia ${dupes.threshold} bit`
-    : esc(dupes.reason || "non eseguito");
+  // Zero pairs out of zero comparable images is not "no duplicates": say so here
+  // as well as in the warnings, because this tile is what gets read first.
+  const senzaImpronta = dupes.unhashed || 0;
+  $("#audit-duplicates").textContent = dupes.scanned && dupes.comparable ? dupes.pair_count : "—";
+  $("#audit-duplicates-note").textContent = !dupes.scanned ? (dupes.reason || "non eseguito")
+    : dupes.comparable
+      ? `${dupes.identical_pairs} identiche · ${dupes.cross_group_pairs} fra gruppi diversi · soglia ${dupes.threshold} bit${dupes.engine ? ` · motore ${dupes.engine}` : ""}${senzaImpronta ? ` · ${senzaImpronta} senza impronta` : ""}`
+      : `analisi visiva non disponibile · ${senzaImpronta} immagini senza impronta percettiva`;
   $("#audit-groups").textContent = groups.count;
   $("#audit-groups-note").textContent = `il più grande copre ${pct(groups.largest_share)}${groups.ungrouped ? ` · ${groups.ungrouped} senza gruppo` : ""}`;
   $("#audit-resolution").textContent = resolution.measured ? `${resolution.median_long_edge} px` : "—";
