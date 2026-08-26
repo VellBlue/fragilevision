@@ -133,7 +133,32 @@
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">04 · The embarrassing zero</p>
+        <p class="section-tag">04 · The people in the painting</p>
+        <h2>There were three people in the painting. There was nobody in the room.</h2>
+        <p class="lead">One small run found a distinction that the ground truth contained and the question did not.</p>
+        <p>The test used 98 photographs and Qwen3‑VL 4B. The canonical prompt was <em>«Nella fotografia c’è più di una persona?»</em> — “is there more than one person in the photograph?” The labels counted people physically present in the photographed scene. Painted and sculpted figures counted as no.</p>
+
+        <div class="observation">
+          <blockquote class="question-quote">Nella fotografia c’è più di una persona?</blockquote>
+          <div class="observation-stats">
+            <div><b>98</b><span>photographs</span></div>
+            <div><b>8</b><span>readable false positives</span></div>
+            <div><b>8/8</b><span>only depicted figures</span></div>
+          </div>
+        </div>
+
+        <p>All eight readable false positives showed figures in paintings, frescoes or sculpture, but no real person. The model returned valid JSON and no explanation, so I cannot claim to know its reasoning. I can only say that every readable false positive landed on the boundary the prompt forgot to define.</p>
+        <p>Under an ordinary reading, the model’s answer is defensible. A photograph of a painting with three people does contain three depicted people. The intended category was narrower: <em>real people physically present when the photograph was made</em>. That qualifier existed in my head and in my labels, not in the question.</p>
+
+        <div class="scope-note"><strong>This is an exploratory observation, not a model claim.</strong> It comes from one model, one source group, one wording and 98 photographs; nine other responses were unreadable. The next test is to compare the original against an explicit version that excludes paintings, photographs, statues and screens.</div>
+
+        <p>This is why prompt fragility is not just about synonyms. Sometimes a variant reveals that two perfectly reasonable readers were answering different questions. Before blaming the model, the benchmark has to say which world it means: the physical scene, or everything represented inside the image.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">05 · The embarrassing zero</p>
         <h2>The audit once reported a clean dataset it had never looked at</h2>
         <p>The perceptual hash originally depended on <code>sips</code>, a macOS command. On Linux and Windows the decoder returned nothing. No hashes meant no visual comparisons; no comparisons meant zero near-duplicate pairs.</p>
         <p>The interface showed the zero without explaining where it came from.</p>
@@ -171,7 +196,7 @@
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">05 · Refusals</p>
+        <p class="section-tag">06 · Refusals</p>
         <h2>Some outputs are better left blank</h2>
         <p class="lead">A useful evaluation tool needs a vocabulary for “I do not know”, “I could not compare this” and “these samples are not independent”.</p>
 
@@ -189,7 +214,7 @@
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">06 · Footprint</p>
+        <p class="section-tag">07 · Footprint</p>
         <h2>Local first is an architectural constraint</h2>
         <p>The core has no required runtime dependencies. It is Python 3.11, SQLite and a static interface served on loopback. Pillow is optional on macOS and required elsewhere for the visual audit. The application rejects public model endpoints and does not send telemetry.</p>
         <p>That choice is not branding. Evaluation datasets are often the very material that cannot be uploaded: unpublished photographs, internal screenshots, medical images, prototypes, client work. “Private by policy” is weaker than “there is no code path to the public API”.</p>
@@ -210,7 +235,7 @@
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">07 · What this does not prove</p>
+        <p class="section-tag">08 · What this does not prove</p>
         <h2>The tool can expose weak evidence. It cannot turn it into strong evidence.</h2>
         <p>FragileVision can tell you that your classes are imbalanced. It cannot choose a defensible population for you. It can find two frames that look almost identical. It cannot know whether the distinction matters to your domain. It can measure reviewer disagreement. It cannot repair a vague concept by statistics.</p>
 

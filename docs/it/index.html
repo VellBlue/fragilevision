@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Un benchmark deve saper smentire la propria conclusione — FragileVision</title>
-  <meta name="description" content="Perché ho costruito FragileVision: un laboratorio locale che mette alla prova il benchmark, il campione e la verità di riferimento insieme al modello visivo.">
+  <meta name="description" content="Perché ho costruito FragileVision: un laboratorio locale che, oltre al modello visivo, mette alla prova il benchmark, il campione e la verità di riferimento.">
   <meta name="theme-color" content="#090c0d">
   <link rel="canonical" href="https://vellblue.github.io/fragilevision/it/">
   <link rel="alternate" hreflang="en" href="https://vellblue.github.io/fragilevision/">
@@ -29,18 +29,18 @@
 
   <header class="hero">
     <div>
-      <p class="eyebrow">Uno strumento di valutazione nato dopo una valutazione fallita</p>
+      <p class="eyebrow">È nato da un benchmark che non mi convinceva più</p>
       <h1>Un benchmark deve saper smentire la propria conclusione</h1>
-      <p class="deck">FragileVision non chiede soltanto se un modello ha risposto bene. Chiede se la domanda, il campione e le persone che lo hanno annotato si sono guadagnati il diritto di dirlo.</p>
+      <p class="deck">FragileVision non si limita a chiedere se il modello ha risposto bene. Controlla anche se la domanda, il campione e le annotazioni permettono davvero di sostenerlo.</p>
       <p class="byline">Simone · agosto 2026 · software locale, metodo pubblico · <a href="../" lang="en">Read in English</a></p>
     </div>
 
     <aside class="ledger" aria-label="Registro delle prove">
       <header><span>Registro delle prove</span><span>FV / 0.15</span></header>
-      <div class="ledger-row"><span>Domanda</span><strong>mutata, non presunta</strong></div>
-      <div class="ledger-row"><span>Campione</span><strong>controllato per scena</strong></div>
-      <div class="ledger-row"><span>Etichette</span><strong>disaccordo conservato</strong></div>
-      <div class="ledger-row warn"><span>Conclusione</span><strong>libera di fallire</strong></div>
+      <div class="ledger-row"><span>Domanda</span><strong>provata in più forme</strong></div>
+      <div class="ledger-row"><span>Campione</span><strong>contato per scene</strong></div>
+      <div class="ledger-row"><span>Etichette</span><strong>disaccordi visibili</strong></div>
+      <div class="ledger-row warn"><span>Conclusione</span><strong>può essere bocciata</strong></div>
     </aside>
   </header>
 
@@ -49,91 +49,116 @@
       <div class="measure">
         <p class="section-tag">01 · Perché esiste</p>
         <h2>Cercavo il modello migliore. Ho trovato un problema nella domanda.</h2>
-        <p class="lead">La prima versione di questo lavoro era un benchmark sulle mie fotografie. Mi aspettavo che la dimensione del modello spiegasse gli errori. Non è successo.</p>
-        <p>Un modello da quattro miliardi di parametri, davanti a una domanda breve e piana, superava quello da otto miliardi interrogato con la formulazione originale. Una negazione poteva trasformare un buon risultato in una risposta quasi costante. Bastava cambiare uno spazio nel prefill per decidere se il modello avrebbe restituito una parola, un paragrafo o niente.</p>
-        <p>Ho raccontato quel lavoro in <a href="https://vellblue.github.io/vlm-photo-bench/it/">Come formuli la domanda conta più della dimensione del modello</a>. L’articolo lasciava aperto un problema di metodo: se il punteggio si muove così tanto mentre fotografie e pesi restano fermi, tenere fisso un solo prompt non è una scelta neutrale. Il prompt fa parte dello strumento di misura.</p>
-        <p>Gli script di quel benchmark bastavano a dimostrarlo una volta. Non bastavano a trasformare la cautela in un’abitudine ripetibile. FragileVision è lo strumento che avrei voluto avere dopo che il risultato mi ha fatto dubitare del mio stesso banco di prova.</p>
+        <p class="lead">All’inizio c’era un benchmark sulle mie fotografie. Pensavo che gli errori si sarebbero spiegati soprattutto con la dimensione dei modelli. Non è andata così.</p>
+        <p>Con una domanda breve e piana, un modello da quattro miliardi di parametri superava quello da otto miliardi interrogato con la formulazione originale. Una negazione poteva trasformare un buon risultato in una risposta quasi costante. A volte bastava cambiare uno spazio nel prefill per ottenere una parola, un paragrafo oppure niente.</p>
+        <p>Ho raccontato quel lavoro in <a href="https://vellblue.github.io/vlm-photo-bench/it/">Come formuli la domanda conta più della dimensione del modello</a>. Restava però un problema di metodo: se il punteggio cambia tanto mentre fotografie e pesi rimangono gli stessi, scegliere un unico prompt e non toccarlo non è una decisione neutrale. Anche il prompt fa parte dello strumento di misura.</p>
+        <p>Gli script del benchmark erano sufficienti per mostrare il problema una volta. Non trasformavano la cautela in un metodo. FragileVision è lo strumento che avrei voluto quando quei risultati mi hanno fatto dubitare del mio stesso banco di prova.</p>
 
         <div class="rule">
           <b>La regola</b>
-          <p>Un risultato diventa una prova solo dopo aver reso visibili i modi in cui potrebbe essere un artefatto.</p>
+          <p>Un risultato diventa una prova soltanto quando sono visibili anche i modi in cui potrebbe essere un artefatto.</p>
         </div>
 
-        <p>È una regola severa, di proposito. I modelli danno già risposte con un’aria di certezza. Il software che li valuta non dovrebbe aggiungere un secondo strato di sicurezza immotivata.</p>
+        <p>È una regola severa, di proposito. I modelli danno già risposte con un’aria di certezza. Il software che li valuta non dovrebbe renderle ancora più sicure di quanto siano.</p>
       </div>
     </section>
 
     <section class="chapter">
       <div class="measure">
         <p class="section-tag">02 · Tre punti di rottura</p>
-        <h2>Il modello è soltanto una delle parti che si muovono</h2>
-        <p>Quasi tutte le classifiche cambiano il modello e tengono fermo il resto. FragileVision tiene fermo anche il modello e mette sotto pressione la valutazione che gli sta intorno.</p>
+        <h2>Il modello non è l’unica cosa che cambia</h2>
+        <p>Quasi tutte le classifiche confrontano modelli diversi e tengono fermo il resto. FragileVision fa anche il contrario: lascia fermo il modello e prova a far cedere la valutazione che gli sta intorno.</p>
       </div>
 
       <div class="wide proof-grid">
         <article class="proof">
           <span class="index">01</span>
           <h3>La formulazione</h3>
-          <p>La stessa domanda semantica passa attraverso cambi controllati di lingua, negazione, esempi, ordine, formato e lunghezza. La fragilità misura quando il verdetto si sposta.</p>
+          <p>La domanda cambia lingua, negazione, esempi, ordine, formato e lunghezza senza cambiare intenzione. La fragilità misura quando, nonostante questo, si sposta il verdetto.</p>
         </article>
         <article class="proof">
           <span class="index">02</span>
           <h3>Il campione</h3>
-          <p>Quasi duplicati, scene dominanti, classi sbilanciate e contaminazioni fra train e test possono far sembrare la ripetizione una prova. L’unità indipendente è la scena, non il file.</p>
+          <p>Quasi duplicati, scene dominanti, classi sbilanciate e contaminazioni fra train e test possono far passare la ripetizione per evidenza. L’unità indipendente è la scena, non il file.</p>
         </article>
         <article class="proof">
           <span class="index">03</span>
           <h3>La verità di riferimento</h3>
-          <p>Un’etichetta scritta da una sola persona è un’opinione con una riga nel database. Revisione cieca, giudizi firmati, coefficienti di accordo e arbitrato mostrano quanto di quell’opinione è davvero condiviso.</p>
+          <p>Un’etichetta scritta da una sola persona resta un’opinione, anche quando è registrata nel database. Revisione cieca, giudizi firmati, coefficienti di accordo e arbitrato mostrano quanto sia davvero condivisa.</p>
         </article>
       </div>
 
       <div class="measure">
-        <p>Questi fallimenti non vanno fusi in un generico numero di “robustezza”. Un modello che cambia fra due chiamate identiche non è lo stesso problema di un prompt che cambia risposta. Un panel che non trova un accordo non è un errore del modello. Una raffica di venti fotogrammi non è fatta di venti osservazioni indipendenti.</p>
-        <p>FragileVision mantiene separate queste superfici anche quando il report finale diventa meno ordinato.</p>
+        <p>Questi problemi non vanno schiacciati dentro un generico numero di “robustezza”. Un modello che cambia fra due chiamate identiche non è lo stesso problema di un prompt che cambia risposta. Il disaccordo fra revisori non è un errore del modello. Una raffica di venti fotogrammi non contiene venti osservazioni indipendenti.</p>
+        <p>FragileVision tiene distinti questi piani, anche a costo di produrre un report meno ordinato.</p>
       </div>
     </section>
 
     <section class="chapter">
       <div class="measure">
         <p class="section-tag">03 · Il percorso</p>
-        <h2>Ogni conclusione lascia una traccia</h2>
-        <p class="lead">L’applicazione è un registro prima di essere una dashboard. Conserva ciò che è successo abbastanza da vicino perché il risultato possa essere contestato, non soltanto ammirato.</p>
+        <h2>Ogni conclusione deve lasciare delle tracce</h2>
+        <p class="lead">FragileVision è un registro prima di essere una dashboard. Conserva abbastanza dettagli perché il risultato possa essere contestato, non soltanto ammirato.</p>
 
         <div class="workflow" aria-label="Percorso delle prove in FragileVision">
           <div class="flow-row">
-            <b>01</b><h3>Importare in locale</h3>
-            <p>Le immagini vengono copiate nello spazio gestito, validate e deduplicate con SHA-256. Non sono caricate da nessuna parte.</p>
+            <b>01</b><h3>Importazione locale</h3>
+            <p>Le immagini vengono copiate nello spazio gestito, controllate e deduplicate con SHA-256. Non vengono caricate altrove.</p>
           </div>
           <div class="flow-row">
-            <b>02</b><h3>Controllare il campione</h3>
-            <p>Integrità, risoluzione, bilanciamento, gruppi sorgente, somiglianza percettiva e contaminazioni dello split vengono verificati prima di una run.</p>
+            <b>02</b><h3>Controllo del campione</h3>
+            <p>Integrità, risoluzione, equilibrio tra le classi, gruppi sorgente, somiglianza percettiva e contaminazioni dello split vengono verificati prima di ogni esecuzione.</p>
           </div>
           <div class="flow-row">
-            <b>03</b><h3>Costruire la verità</h3>
-            <p>I revisori lavorano alla cieca. Unanimità e maggioranza stretta possono chiudere un caso; pareggi e pluralità no. L’arbitrato si aggiunge, non cancella il disaccordo.</p>
+            <b>03</b><h3>Verità di riferimento</h3>
+            <p>I revisori lavorano alla cieca. L’unanimità o una maggioranza netta possono chiudere un caso; un pareggio o l’assenza di una maggioranza no. L’arbitrato si aggiunge, non cancella il disaccordo.</p>
           </div>
           <div class="flow-row">
-            <b>04</b><h3>Stressare la domanda</h3>
-            <p>Le varianti conservano il significato previsto e cambiano la superficie linguistica. Le ripetizioni misurano separatamente la deriva.</p>
+            <b>04</b><h3>La domanda alla prova</h3>
+            <p>Le varianti mantengono ferma l’intenzione e cambiano le parole. Le ripetizioni misurano separatamente la deriva del modello.</p>
           </div>
           <div class="flow-row">
-            <b>05</b><h3>Eseguire modelli locali</h3>
+            <b>05</b><h3>Modelli locali</h3>
             <p>Ollama e gli endpoint privati compatibili con OpenAI sono ammessi. Gli endpoint pubblici vengono rifiutati per scelta.</p>
           </div>
           <div class="flow-row">
-            <b>06</b><h3>Pubblicare anche i limiti</h3>
-            <p>La Claim Card porta con sé intervalli, baseline, copertura, fallimenti del parser, test appaiati, controlli delle prove e fingerprint della valutazione.</p>
+            <b>06</b><h3>Anche i limiti nel report</h3>
+            <p>La Claim Card include intervalli, baseline, copertura, fallimenti del parser, test appaiati, controlli sull’evidenza e fingerprint della valutazione.</p>
           </div>
         </div>
 
-        <p>Ogni risposta conserva il prompt finale esatto, l’adattatore, il seed, la temperatura, l’output grezzo, la decisione del parser, la latenza e i token. Il pacchetto di riproduzione è volutamente noioso: CSV, JSON, Markdown, percorsi locali e hash. La riproducibilità tende ad assomigliare alla burocrazia.</p>
+        <p>Di ogni risposta restano il prompt finale esatto, l’adattatore, il seed, la temperatura, l’output grezzo, la decisione del parser, la latenza e i token. Il pacchetto per ripetere l’esperimento è volutamente noioso: CSV, JSON, Markdown, percorsi locali e hash. La riproducibilità assomiglia spesso alla burocrazia.</p>
       </div>
     </section>
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">04 · Lo zero imbarazzante</p>
+        <p class="section-tag">04 · Le persone nel quadro</p>
+        <h2>Nel dipinto c’erano tre persone. Nella stanza, nessuna.</h2>
+        <p class="lead">Una piccola prova ha trovato una distinzione presente nelle etichette, ma assente dalla domanda.</p>
+        <p>Il test comprendeva 98 fotografie ed è stato eseguito con Qwen3‑VL 4B. La domanda era: <em>«Nella fotografia c’è più di una persona?»</em> Nelle annotazioni contavano soltanto le persone fisicamente presenti nella scena. Figure dipinte o scolpite valevano come “no”.</p>
+
+        <div class="observation">
+          <blockquote class="question-quote">Nella fotografia c’è più di una persona?</blockquote>
+          <div class="observation-stats">
+            <div><b>98</b><span>fotografie</span></div>
+            <div><b>8</b><span>falsi positivi leggibili</span></div>
+            <div><b>8/8</b><span>solo figure rappresentate</span></div>
+          </div>
+        </div>
+
+        <p>Tutti e otto i falsi positivi leggibili mostravano personaggi in dipinti, affreschi o sculture, ma nessuna persona reale. Il modello ha restituito soltanto JSON valido, senza spiegazione: non posso dire quale ragionamento abbia seguito. Posso però osservare che ogni falso positivo leggibile è caduto proprio sul confine che la domanda non aveva definito.</p>
+        <p>A leggerla alla lettera, la risposta del modello è difendibile. Una fotografia di un dipinto con tre persone contiene tre persone rappresentate. Io però intendevo una categoria più stretta: <em>persone reali, fisicamente presenti al momento dello scatto</em>. Questa precisazione esisteva nella mia testa e nelle etichette, non nel prompt.</p>
+
+        <div class="scope-note"><strong>È un’osservazione esplorativa, non una conclusione sul modello.</strong> Riguarda un solo modello, un solo gruppo sorgente, una sola formulazione e 98 fotografie; altre nove risposte erano illeggibili. Il passo successivo è confrontare la domanda originale con una variante che escluda esplicitamente dipinti, fotografie, statue e schermi.</div>
+
+        <p>La fragilità del prompt non riguarda soltanto i sinonimi. A volte una variante mostra che due lettori ragionevoli stavano rispondendo a due domande diverse. Prima di accusare il modello, il benchmark deve chiarire quale mondo gli interessa: la scena fisica oppure tutto ciò che l’immagine rappresenta.</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="measure">
+        <p class="section-tag">05 · Lo zero imbarazzante</p>
         <h2>L’audit ha dichiarato pulito un dataset che non aveva mai guardato</h2>
         <p>L’impronta percettiva dipendeva inizialmente da <code>sips</code>, un comando di macOS. Su Linux e Windows il decodificatore non restituiva niente. Niente hash significava niente confronti visivi; niente confronti diventava zero coppie quasi duplicate.</p>
         <p>L’interfaccia mostrava quello zero senza dire da dove arrivava.</p>
@@ -143,7 +168,7 @@
       <div class="wide audit-example">
         <div class="audit-copy">
           <h3>Zero può voler dire “non ho trovato niente”. Può anche voler dire “non ho misurato niente”.</h3>
-          <p>La correzione ha due strati: Pillow fornisce ora un decodificatore fuori da macOS e l’audit alza un avviso di severità alta per ogni immagine senza impronta. Quando nessun confronto è possibile, la piastrella mostra un trattino, non uno zero pulito.</p>
+          <p>La correzione ha due parti: fuori da macOS le immagini vengono decodificate con Pillow; inoltre l’audit considera grave la presenza di immagini senza impronta. Se nessun confronto è possibile, il riepilogo mostra un trattino, non uno zero rassicurante.</p>
         </div>
         <div class="audit-panel">
           <div class="warning">
@@ -163,36 +188,36 @@
       </div>
 
       <div class="measure">
-        <p>I due decoder non producono hash identici. Ho misurato anche questo: su 200 fotografie differiscono in media di 2,1 bit e al massimo di 7 bit su 64. Il riconoscimento delle coppie identiche resta vicino; il confine più largo della “stessa scena” si sposta abbastanza da rendere disonesto fingere che i motori siano intercambiabili.</p>
+        <p>I due decoder non producono hash identici. Ho misurato anche questo: su 200 fotografie differiscono in media di 2,1 bit e al massimo di 7 bit su 64. Sulle coppie identiche concordano quasi sempre; sul confine più largo della “stessa scena” divergono abbastanza da rendere disonesto trattarli come equivalenti.</p>
         <p>Perciò il motore è nominato nell’audit ed entra nella versione della cache. I confronti fra macchine devono avvenire a parità di motore. La soglia dei quasi duplicati non è stata spostata per far sembrare migliore il fallback.</p>
-        <p>Questa sezione esiste perché l’errore dice sul software più di un altro elenco di funzioni. FragileVision non è nato perfettamente onesto. Ha dovuto subire la propria regola.</p>
+        <p>Questa sezione esiste perché l’errore racconta il software meglio di un altro elenco di funzioni. Anche FragileVision ha dovuto essere giudicato con il metro che propone agli altri.</p>
       </div>
     </section>
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">05 · I rifiuti</p>
-        <h2>Alcuni risultati è meglio lasciarli vuoti</h2>
+        <p class="section-tag">06 · Quando fermarsi</p>
+        <h2>A volte il risultato giusto è non dare un numero</h2>
         <p class="lead">Uno strumento di valutazione utile deve saper dire “non lo so”, “questo non l’ho potuto confrontare” e “questi campioni non sono indipendenti”.</p>
 
         <div class="refusal-list">
-          <div class="refusal"><b>×</b><p>Nessun verdetto nascosto dentro una prosa ambigua.<span>Se una risposta contiene più etichette possibili, il parser la registra come illeggibile invece di scegliere la parola più comoda.</span></p></div>
-          <div class="refusal"><b>×</b><p>Nessun 100% costruito su una sola risposta facile.<span>Nell’Arena i modelli sono ordinati soltanto sulle unità che tutti hanno risposto in modo leggibile. La copertura resta accanto al punteggio.</span></p></div>
+          <div class="refusal"><b>×</b><p>Nessun verdetto estratto a forza da una risposta ambigua.<span>Se compaiono più etichette possibili, il parser registra la risposta come illeggibile invece di scegliere la parola più comoda.</span></p></div>
+          <div class="refusal"><b>×</b><p>Nessun 100% costruito su una sola risposta facile.<span>Nell’Arena i modelli sono ordinati soltanto sulle unità alle quali tutti hanno risposto in modo leggibile. La copertura resta accanto al punteggio.</span></p></div>
           <div class="refusal"><b>×</b><p>Nessuno split casuale dentro la stessa scena.<span>Gruppi sorgente e cluster quasi duplicati si muovono insieme. Se esiste una sola scena indipendente, lo split viene rifiutato invece di essere inventato.</span></p></div>
           <div class="refusal"><b>×</b><p>Nessun consenso forzato.<span>Un pareggio resta un conflitto. L’arbitro firma una nuova decisione; i revisori originali non vengono riscritti.</span></p></div>
           <div class="refusal"><b>×</b><p>Nessuna classifica globale dei modelli.<span>La Claim Card descrive un sistema formato da modello, dataset e prompt. Non trasforma un’osservazione locale in una graduatoria universale.</span></p></div>
         </div>
 
-        <p>Questa prudenza ha un costo. Ci sono più trattini, avvisi e giudizi di prove insufficienti di quanti se ne aspettino da una dashboard. Per me è una caratteristica. Una cella vuota con una ragione informa più di un numero lucido senza denominatore.</p>
+        <p>Questa prudenza ha un costo. Ci sono più trattini, avvisi e giudizi di prove insufficienti di quanto ci si aspetti da una dashboard. Per me è una caratteristica. Una cella vuota con una spiegazione informa più di un numero ben impaginato senza denominatore.</p>
       </div>
     </section>
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">06 · L’impronta</p>
-        <h2>“Local first” è un vincolo architetturale</h2>
-        <p>Il nucleo non ha dipendenze obbligatorie a runtime. È Python 3.11, SQLite e un’interfaccia statica servita su loopback. Pillow è opzionale su macOS e necessario altrove per l’audit visivo. L’applicazione rifiuta endpoint pubblici per i modelli e non invia telemetria.</p>
-        <p>Non è una scelta di branding. Spesso i dataset da valutare sono proprio il materiale che non si può caricare altrove: fotografie inedite, schermate interne, immagini mediche, prototipi, lavori per clienti. “Privato per regolamento” è più debole di “non esiste un percorso nel codice verso un’API pubblica”.</p>
+        <p class="section-tag">07 · Com’è fatto</p>
+        <h2>“Local first” non è uno slogan</h2>
+        <p>Il nucleo non ha dipendenze obbligatorie. È composto da Python 3.11, SQLite e un’interfaccia statica raggiungibile soltanto in locale. Pillow è opzionale su macOS e necessario altrove per l’audit visivo. L’applicazione rifiuta gli endpoint pubblici per i modelli e non invia telemetria.</p>
+        <p>È una scelta architetturale, non di immagine. Spesso i dataset da valutare sono proprio quelli che non si possono caricare altrove: fotografie inedite, schermate interne, immagini mediche, prototipi, lavori per clienti. “Privato per regolamento” è più debole di “nel codice non esiste una strada verso un’API pubblica”.</p>
 
         <div class="terminal" aria-label="Comandi di installazione">
           <header>Installazione locale</header>
@@ -204,21 +229,21 @@
 <span class="comment"># poi apri http://127.0.0.1:7331</span></code></pre>
         </div>
 
-        <p>Esiste anche un bundle per macOS costruito dallo stesso pacchetto. Windows e Linux usano il comando Python. Il fallback visivo è stato esercitato simulando la piattaforma Linux e nella suite di test; non è ancora stato eseguito su una macchina Windows o Linux fisica. Questa distinzione deve stare nell’articolo, non in un futuro bug report.</p>
+        <p>Esiste anche un bundle per macOS costruito dallo stesso pacchetto. Su Windows e Linux si usa il comando Python. Il decoder alternativo è stato collaudato simulando Linux e nella suite di test; non è ancora stato provato su una macchina Windows o Linux fisica. È una distinzione che preferisco scrivere qui, non in un futuro bug report.</p>
       </div>
     </section>
 
     <section class="chapter">
       <div class="measure">
-        <p class="section-tag">07 · Cosa non dimostra</p>
-        <h2>Lo strumento può mostrare una prova debole. Non può renderla forte.</h2>
+        <p class="section-tag">08 · Cosa non dimostra</p>
+        <h2>Può mostrare che le prove sono deboli. Non può rafforzarle.</h2>
         <p>FragileVision può dire che le classi sono sbilanciate. Non può scegliere al posto tuo una popolazione difendibile. Può trovare due fotogrammi quasi identici. Non può sapere se la differenza è importante nel tuo dominio. Può misurare il disaccordo fra revisori. Non può riparare con la statistica un concetto vago.</p>
 
         <div class="limits">
           <article class="limit"><b>Euristica</b><p>L’Evidence Gate è una checklist trasparente, non una peer review e non una prova di validità.</p></article>
-          <article class="limit"><b>Calibrazione</b><p>La soglia di 12 bit per i quasi duplicati è stata calibrata su un archivio fotografico reale. Altri domini devono metterla in discussione.</p></article>
+          <article class="limit"><b>Calibrazione</b><p>La soglia di 12 bit per i quasi duplicati è stata calibrata su un archivio fotografico reale. In altri domini va rimessa alla prova.</p></article>
           <article class="limit"><b>Scala</b><p>Il confronto visivo a coppie ha intenzionalmente un limite. Dataset grandi richiedono una strategia di indicizzazione diversa.</p></article>
-          <article class="limit"><b>Maturità</b><p>La versione 0.15 è un’anteprima di ricerca. Il formato migra in avanti, ma può ancora cambiare prima della 1.0.</p></article>
+          <article class="limit"><b>Maturità</b><p>La versione 0.15 è un’anteprima di ricerca. Il database viene aggiornato senza perdere lo storico, ma può ancora cambiare prima della 1.0.</p></article>
         </div>
 
         <p>Ci sono un generatore sintetico di stress e un dataset geometrico libero da diritti, così si può esplorare l’intero percorso senza un modello né immagini private. Il dataset demo fa scattare intenzionalmente il proprio avviso sui quasi duplicati. Serve a mostrare che l’audit funziona, non a fornire il risultato di un benchmark.</p>
@@ -230,7 +255,7 @@
       <div class="wide">
         <p class="section-tag">Open source · Apache 2.0 · interamente locale</p>
         <h2>Ogni numero deve confessare i propri limiti.</h2>
-        <p>FragileVision è già utilizzabile, ispezionabile riga per riga e ancora abbastanza giovane perché il disaccordo sia utile.</p>
+        <p>FragileVision è già utilizzabile, ispezionabile riga per riga e ancora abbastanza giovane da poter migliorare grazie alle critiche.</p>
         <a class="button" href="https://github.com/VellBlue/fragilevision">Leggi il codice su GitHub ↗</a>
       </div>
     </section>
@@ -238,7 +263,7 @@
 
   <footer>
     <span>FragileVision · agosto 2026</span>
-    <span>Nessun analytics · nessun cookie · nessuna risorsa esterna</span>
+    <span>Nessun sistema di analisi · nessun cookie · nessuna risorsa esterna</span>
   </footer>
 </body>
 </html>

@@ -313,6 +313,58 @@ main { overflow: hidden; }
 .flow-row h3 { margin: 0; font: 600 16px/1.4 var(--sans); }
 .flow-row p { margin: 0; color: var(--muted); font-size: 17px; }
 
+.observation {
+  margin: 48px 0;
+  border-top: 1px solid var(--line-bright);
+  border-bottom: 1px solid var(--line-bright);
+}
+
+.question-quote {
+  margin: 0;
+  padding: 26px 0;
+  color: var(--ink);
+  font: 400 25px/1.45 var(--serif);
+}
+
+.question-quote::before {
+  content: "Prompt";
+  display: block;
+  margin-bottom: 11px;
+  color: var(--acid);
+  font: 700 10px/1 var(--mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.observation-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border-top: 1px solid var(--line);
+}
+
+.observation-stats div {
+  padding: 18px;
+  background: var(--paper);
+}
+
+.observation-stats b,
+.observation-stats span { display: block; }
+.observation-stats b { color: var(--acid); font: 400 30px/1 var(--serif); }
+.observation-stats span { margin-top: 7px; color: var(--faint); font: 10px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+
+.scope-note {
+  margin: 34px 0;
+  padding: 17px 19px;
+  border-left: 3px solid var(--amber);
+  background: #f1ae530a;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.scope-note strong { color: var(--amber); }
+
 .audit-example {
   display: grid;
   grid-template-columns: 1.05fr .95fr;
@@ -507,6 +559,7 @@ footer {
   .flow-row { grid-template-columns: 40px 1fr; }
   .flow-row p { grid-column: 2; }
   .limits { grid-template-columns: 1fr; }
+  .observation-stats { grid-template-columns: 1fr; }
   .rule { grid-template-columns: 1fr; gap: 8px; }
   footer { flex-direction: column; }
 }
